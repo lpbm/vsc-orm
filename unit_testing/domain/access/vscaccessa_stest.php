@@ -12,9 +12,9 @@ import ('models/connections');
 import ('exceptions');
 
 include_once ('fixtures/dummytable.class.php'); // the definition of the entity
-include_once ('fixtures/dataobject.class.php'); // the definition of the data object
+include_once ('../domain/fixtures/dataobject.class.php'); // the definition of the data object
 
-class vscTdoTest extends Snap_UnitTestCase {
+class vscAccessTest extends Snap_UnitTestCase {
 	private $connection;
 
 	public function setUp () {

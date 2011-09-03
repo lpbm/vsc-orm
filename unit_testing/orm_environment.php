@@ -2,10 +2,10 @@
 /**
  * this will be linked from the snaptest/addons folder
  */
-$config['name'] = 'VSC v.2';
+$config['name'] = 'VSC v.2 - ORM';
 $config['version'] = '0.1';
 $config['author'] = 'marius orcsik <marius@habarnam.ro>';
-$config['description'] = 'VSC v.2 configuration for UnitTesting';
+$config['description'] = 'VSC v.2 ORM Layer configuration for UnitTesting';
 include_once ('core/reporter/reporter.php');
 include_once ('core/reporter/reporters/text.php');
 include_once ('core/reporter/reporters/phpserializer.php');

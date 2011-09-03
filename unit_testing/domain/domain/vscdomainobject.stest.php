@@ -6,7 +6,7 @@
  */
 include_once ('fixtures/dummytable.class.php');
 
-class vscEntityTest extends Snap_UnitTestCase {
+class vscDomainObjectTest extends Snap_UnitTestCase {
 	/**
 	 * @var vscDomainObjectA
 	 */
@@ -45,7 +45,7 @@ class vscEntityTest extends Snap_UnitTestCase {
 		$value = $this->state->getPayload ();
 		return $this->assertEqual ($value->getValue(), 2);
 	}
-	
+
 	public function testGetterNull () {
 		$value = $this->state->getId();
 		return $this->assertNull($value->getValue());
@@ -65,6 +65,7 @@ class vscEntityTest extends Snap_UnitTestCase {
 	}
 
 	public function testFromArray () {
+		date_default_timezone_set('Europe/Bucharest');
 		$values = array (
 			'id' 		=> 1,
 			'payload'	=> 'Ana are mere !! test" asd" ',
@@ -76,7 +77,7 @@ class vscEntityTest extends Snap_UnitTestCase {
 		$aAssertion[] 	= $this->assertEqual($values['id'], 			$this->state->getId()->getValue());
 		$aAssertion[]	= $this->assertEqual($values['payload'], 		$this->state->getPayload()->getValue());
 		$aAssertion[]	= $this->assertEqual($values['timestamp'], 		$this->state->getTimestamp()->getValue());
-		
+
 		// this is dumb
 		return $aAssertion[rand(0, 2)];
 	}
@@ -107,7 +108,7 @@ class vscEntityTest extends Snap_UnitTestCase {
 
 //		$this->state->join ($a, $this->state->getPrimaryKey(), $a->getPrimaryKey());
 		$this->todo('Do me: ' . __METHOD__);
-		
+
 //		return $this->assertIsA($this->state, 'dummyTable');
 	}
 }
