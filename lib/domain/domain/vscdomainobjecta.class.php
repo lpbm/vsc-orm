@@ -16,7 +16,6 @@ abstract class vscDomainObjectA extends vscModelA implements vscDomainObjectI {
 	protected 	$sTableName;
 	private 	$sTableAlias;
 	private 	$oPk;
-//	private		$aFields = array ();
 	private 	$aIndexes = array ();
 
 	public function valid ($sName = null) {
@@ -76,9 +75,9 @@ abstract class vscDomainObjectA extends vscModelA implements vscDomainObjectI {
 	 */
 	public function setTableAlias ($sAlias) {
 		$this->sTableAlias = $sAlias;
-        foreach ($this->getFields() as $oField) {
-            $oField->setAlias($sAlias . '_' . $oField->getName());
-        }
+		foreach ($this->getFields() as $oField) {
+			$oField->setAlias($sAlias . '_' . $oField->getName());
+		}
 	}
 
 	/**
@@ -185,21 +184,21 @@ abstract class vscDomainObjectA extends vscModelA implements vscDomainObjectI {
 	 * @return string[]
 	 */
 	public function getFieldNames ($bWithAlias = false) {
-        $aFields = $this->getFields();
+		$aFields = $this->getFields();
 		if ($bWithAlias === false) {
 			return array_keys ($aFields);
 		} else {
 			$aRet = array();
 		/* @var $oField vscFieldA */
-        	foreach ($aFields as $oField) {
-        		if ($oField->getAlias()) {
-        			$aRet[] = $oField->getAlias();
-        		} else {
-        			$aRet[] = $oField->getTableAlias() . '.' . $oField->getName();
-        		}
+			foreach ($aFields as $oField) {
+				if ($oField->getAlias()) {
+					$aRet[] = $oField->getAlias();
+				} else {
+					$aRet[] = $oField->getTableAlias() . '.' . $oField->getName();
+				}
 
-        	}
-        	return $aRet;
+			}
+			return $aRet;
 		}
 	}
 
@@ -261,15 +260,15 @@ abstract class vscDomainObjectA extends vscModelA implements vscDomainObjectI {
 			}
 		}
 		return $iStatus;
-    }
+	}
 
-    static public function isValid($oIncObject) {
-        return ($oIncObject instanceof static);
-    }
+	static public function isValid($oIncObject) {
+		return ($oIncObject instanceof static);
+	}
 
-    public function reset() {
+	public function reset() {
 		foreach ($this->getFieldNames() as $sFieldName) {
 			$this->$sFieldName->setValue(null);
 		}
-    }
+	}
 }

@@ -51,7 +51,6 @@ abstract class vscSqlAccessA extends vscObject implements vscSqlAccessI {
 			));
 
 			$this->getConnection()->selectDatabase($this->getDatabaseName());
-
 			if (!self::isValidConnection($this->oConnection)) {
 				throw new vscInvalidTypeException ('Could not establish a valid DB connection - current resource type [' . get_class ($this->oConnection) . ']');
 			}
@@ -108,13 +107,5 @@ abstract class vscSqlAccessA extends vscObject implements vscSqlAccessI {
 	 */
 	public function delete (vscDomainObjectA $oDomainObject) {
 		return $this->getConnection()->query($this->outputDeleteSql($oDomainObject));
-	}
-
-	/**
-	 * (non-PHPdoc)
-	 * @see vscSqlAccessI::save()
-	 */
-	public function save (vscDomainObjectA $oDomainObject) {
-		//return $this->getConnection()->query($this->outputDeleteSql($oDomainObject));
 	}
 }

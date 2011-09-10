@@ -6,7 +6,7 @@
  */
 class vscJoinA extends vscObject {
 	private	$oLeftField;
-	private	$oRightField;
+	private	$oRightLeft;
 
 	public function getLeft() {
 		return $this->oLeftField;

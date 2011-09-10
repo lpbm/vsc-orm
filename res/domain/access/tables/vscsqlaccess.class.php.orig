@@ -212,6 +212,51 @@ class vscSqlAccess extends vscSqlAccessA {
 		return $sRet . ';';
 	}
 
+	/**
+	 * Outputs the SQL necessary for creating the table
+	 * @return string
+	 */
+//	public function outputCreateTableSQL (vscDomainObjectI $oDomainObject) {
+//		if ($this->getConnection()->getType() == vscConnectionType::mysql){
+//			$bFullText = false;
+//		}
+//
+//		$sRet = $this->getConnection()->_CREATE ($oDomainObject->getTableName()) . "\n";
+//		$sRet .= ' ( ' . "\n";
+//
+//		/* @var $oColumn vscFieldA */
+//		foreach ($oDomainObject->getFields () as $oColumn) {
+//			$sRet .= "\t" . $oColumn->getName() . ' ' . $this->getAccess($oColumn)->getDefinition($oColumn) ;
+//			$sRet .= ', ' . "\n";
+//		}
+//
+//		$aIndexes = $oDomainObject->getIndexes(true);
+//		if (is_array ($aIndexes) && !empty($aIndexes)) {
+//			foreach ($aIndexes as $oIndex) {
+//				if (vscIndexA::isValid($oIndex)) {
+//					// checking for fulltext indexes
+//					if ($this->getConnection()->getType() == vscConnectionType::mysql && !$bFullText && vscKeyFullText::isValid($oIndex)){
+//						$bFullText	= true;
+//						$sEngine	= 'MyISAM';
+//					} elseif ($this->getConnection()->getType() == vscConnectionType::mysql) {
+//						$sEngine	= $this->getConnection()->getEngine();
+//					}
+//					// this needs to be replaced with connection functionality : something like getConstraint (type, columns)
+//					$sRet .=  "\t" . $this->getAccess($oIndex)->getDefinition($oIndex) . ", \n";
+//				}
+//			}
+//		}
+//
+//		$sRet = substr( $sRet, 0, -3 );
+//
+//		$sRet.= "\n" . ' ) ';
+//
+//		if ($this->getConnection()->getType() == vscConnectionType::mysql) {
+//			$sRet.= ' ENGINE ' . $sEngine;
+//		}
+//
+//		return $sRet . ';';
+//	}
 
 	public function outputDeleteSql (vscDomainObjectI $oDomainObject) {
 		$sSql = '';
@@ -596,50 +641,4 @@ class vscSqlAccess extends vscSqlAccessA {
 
 		return $sStr;
 	}
-
-	/**
-	 * Outputs the SQL necessary for creating the table
-	 * @return string
-	 */
-//	public function outputCreateTableSQL (vscDomainObjectI $oDomainObject) {
-//		if ($this->getConnection()->getType() == vscConnectionType::mysql){
-//			$bFullText = false;
-//		}
-//
-//		$sRet = $this->getConnection()->_CREATE ($oDomainObject->getTableName()) . "\n";
-//		$sRet .= ' ( ' . "\n";
-//
-//		/* @var $oColumn vscFieldA */
-//		foreach ($oDomainObject->getFields () as $oColumn) {
-//			$sRet .= "\t" . $oColumn->getName() . ' ' . $this->getAccess($oColumn)->getDefinition($oColumn) ;
-//			$sRet .= ', ' . "\n";
-//		}
-//
-//		$aIndexes = $oDomainObject->getIndexes(true);
-//		if (is_array ($aIndexes) && !empty($aIndexes)) {
-//			foreach ($aIndexes as $oIndex) {
-//				if (vscIndexA::isValid($oIndex)) {
-//					// checking for fulltext indexes
-//					if ($this->getConnection()->getType() == vscConnectionType::mysql && !$bFullText && vscKeyFullText::isValid($oIndex)){
-//						$bFullText	= true;
-//						$sEngine	= 'MyISAM';
-//					} elseif ($this->getConnection()->getType() == vscConnectionType::mysql) {
-//						$sEngine	= $this->getConnection()->getEngine();
-//					}
-//					// this needs to be replaced with connection functionality : something like getConstraint (type, columns)
-//					$sRet .=  "\t" . $this->getAccess($oIndex)->getDefinition($oIndex) . ", \n";
-//				}
-//			}
-//		}
-//
-//		$sRet = substr( $sRet, 0, -3 );
-//
-//		$sRet.= "\n" . ' ) ';
-//
-//		if ($this->getConnection()->getType() == vscConnectionType::mysql) {
-//			$sRet.= ' ENGINE ' . $sEngine;
-//		}
-//
-//		return $sRet . ';';
-//	}
 }

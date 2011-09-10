@@ -31,7 +31,7 @@ class vsc extends vscObject {
 	 * @return vscHttpRequestA
 	 */
 	static public function getHttpRequest () {
-		if (class_exists('vscHttpRequestA') && !vscHttpRequestA::isValid(self::$oRequest)){
+		if (!vscHttpRequestA::isValid(self::$oRequest)){
 			self::$oRequest = new vscRwHttpRequest();
 		}
 
@@ -42,7 +42,7 @@ class vsc extends vscObject {
 	 * @return vscHttpDispatcherA
 	 */
 	static public function getDispatcher () {
-		if (class_exists ('vscDispatcherA') && !vscDispatcherA::isValid(self::$oDispatcher)){
+		if (!vscDispatcherA::isValid(self::$oDispatcher)){
 			self::$oDispatcher = new vscRwDispatcher();
 		}
 		return self::$oDispatcher;

@@ -14,6 +14,7 @@ class vscDomainObjectTest extends Snap_UnitTestCase {
 
 	public function setUp() {
 		// begin transaction shit - if the case
+		date_default_timezone_set('Europe/Bucharest');
 		$this->state = new dummyTable();
 	}
 
@@ -51,35 +52,26 @@ class vscDomainObjectTest extends Snap_UnitTestCase {
 		return $this->assertNull($value->getValue());
 	}
 
-	public function testSetter () {
-		$this->state->setPayload (1);
-		$value = $this->state->getPayload();
+	public function testSetterGetterInt () {
+		$this->state= 1;
+		$value = $this->state;
 
-		return $this->assertEqual ($value->getValue(), 1);
-
-
-//		$this->state->setPayload (null);
-//		$value = $this->state->getPayload();
-//
-//		$this->assertNull ($value);
+		return $this->assertEqual ($value, 1);
 	}
 
-	public function testFromArray () {
-		date_default_timezone_set('Europe/Bucharest');
-		$values = array (
-			'id' 		=> 1,
-			'payload'	=> 'Ana are mere !! test" asd" ',
-			'timestamp'	=> date('Y-m-d G:i:s'),
-		);
+	public function testSetterGetterString () {
+		$var = 'asd';
+		$this->state= $var;
+		$value = $this->state;
 
-		$this->state->fromArray ($values);
+		return $this->assertEqual ($value, $var);
+	}
 
-		$aAssertion[] 	= $this->assertEqual($values['id'], 			$this->state->getId()->getValue());
-		$aAssertion[]	= $this->assertEqual($values['payload'], 		$this->state->getPayload()->getValue());
-		$aAssertion[]	= $this->assertEqual($values['timestamp'], 		$this->state->getTimestamp()->getValue());
+	public function testSetterGetterNull () {
+		$this->state =  null;
+		$value = $this->state;
 
-		// this is dumb
-		return $aAssertion[rand(0, 2)];
+		return $this->assertNull ($value);
 	}
 
 	public function testToArray () {
@@ -89,27 +81,40 @@ class vscDomainObjectTest extends Snap_UnitTestCase {
 			'timestamp'	=> date('Y-m-d G:i:s'),
 		);
 
-		$this->state->fromArray ($values);
+		$this->state->id->setValue($values['id']);
+		$this->state->payload->setValue($values['payload']);
+		$this->state->timestamp->setValue($values['timestamp']);
 
-		$values2 = $this->state->toArray ();
-
-		$aAssertion[] 	= $this->assertEqual($values['id'], 			$values2['id']);
-		$aAssertion[] 	= $this->assertEqual($values['payload'], 		$values2['payload']);
-		$aAssertion[] 	= $this->assertEqual($values['timestamp'], 		$values2['timestamp']);
-		// this is dumb
-		return $aAssertion[rand(0, 2)];
+		return $this->assertEqual($this->state->toArray(), $values);
 	}
 
-	/**
-	 * @todo
-	 */
-	public function testJoinObjects () {
-		$a = new dummyTable();
+	public function testFromArray () {
+		$values = array (
+			'id' 		=> 1,
+			'payload'	=> 'Ana are mere !! test" asd" ',
+			'timestamp'	=> date('Y-m-d G:i:s'),
+		);
+		$this->state->fromArray ($values);
 
-//		$this->state->join ($a, $this->state->getPrimaryKey(), $a->getPrimaryKey());
-		$this->todo('Do me: ' . __METHOD__);
+		return $this->assertEqual($this->state->toArray(), $values);
+	}
 
-//		return $this->assertIsA($this->state, 'dummyTable');
+
+	public function testGetFields () {
+// 		d($this->state->getFields());
+		return $this->todo ('get fields');
+	}
+	public function testGetFieldNames () {
+		return $this->todo ('get field names');
+	}
+	public function testSetFieldsParent () {
+		return $this->todo ('set fields parent');
+	}
+	public function testSetPrimaryKey () {
+		return $this->todo ('set primary key');
+	}
+	public function testSetTableAlias () {
+		return $this->todo ('set table alias');
 	}
 }
 

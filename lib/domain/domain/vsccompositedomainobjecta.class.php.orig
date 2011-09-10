@@ -124,4 +124,6 @@ abstract class vscCompositeDomainObjectA extends vscObject implements vscComposi
 	public function getForeignKeys (){
 		return $this->aForeignKeys;
 	}
+
+
 }

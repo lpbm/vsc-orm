@@ -206,9 +206,8 @@ class mySqlIm extends vscConnectionA {
 	 */
 	public function getArray (){
 		$retArr = array();
-// 		d ($this->conn->field_count);
 		if ($this->conn instanceof mysqli_result) {
-			while (($r = $this->conn->fetch_assoc ())){
+			while ($r =$this->conn->fetch_assoc ()){
 				$retArr[] = $r;
 			}
 			$this->conn->free_result();
