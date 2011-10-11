@@ -1,4 +1,5 @@
 <?php
+import ('domain/connections');
 class postgreSql extends vscConnectionA {
 	public 		$conn,
 				$link;
@@ -11,26 +12,26 @@ class postgreSql extends vscConnectionA {
 		if (!extension_loaded('pgsql')) {
 			return new nullSql();
 		}
-		if (!empty ($dbHost)) {
-			$this->host	= $dbHost;
-		} else {
-			throw new vscConnectionException ('Database connection data missing: [DB_HOST]');
+		if (empty ($dbHost)) {
+			throw new vscExceptionConnection ('Database connection data missing: [DB_HOST]');
 		}
 
-		if (!empty ($dbUser)) {
-			$this->user	= $dbUser;
-		} else {
-			throw new vscConnectionException ('Database connection data missing: [DB_USERNAME]');
+		if (empty ($dbUser)) {
+			throw new vscExceptionConnection ('Database connection data missing: [DB_USER]');
 		}
 
-		if(!empty($dbPass)) {
-			$this->pass	= $dbPass;
+		if(empty($dbPass)) {
+			throw new vscExceptionConnection ('Database connection data missing: [DB_PASS]');
+		}
+
+		if(empty($dbName)) {
+			throw new vscExceptionConnection ('Database connection data missing: [DB_NAME]');
 		}
 
 		try {
-			$this->connect ();
+			$this->connect ($dbHost, $dbUser, $dbPass, $dbName);
 		} catch (Exception $e) {
-			d($e);
+			_e($e);
 		}
 	}
 
@@ -68,7 +69,6 @@ class postgreSql extends vscConnectionA {
 	 * @return bool
 	 */
 	public function close (){
-//		if ($this->link instanceof mysqli)
 		pg_close($this->link);
 		$this->link = null;
 		return true;
@@ -119,8 +119,8 @@ class postgreSql extends vscConnectionA {
 			}
 			if (isset($GLOBALS['queries'])) {
 				$aQuery = array (
-					'query'	=> $query,
-					'duration' => $qend - $qst, // seconds
+					'query'		=> $query,
+					'duration'	=> $qend - $qst, // seconds
 				);
 
 				$GLOBALS['queries'][] = $aQuery;
@@ -128,16 +128,16 @@ class postgreSql extends vscConnectionA {
 		} else
 			return false;
 
-		if (!$this->conn)	{
+		if (pg_errormessage($this->link))	{
 			$e = new vscExceptionDomain($this->link->error.'<br/> ' . $query, $this->link->errno);
 			return false;
 		}
 
-		if (stristr('select', $query))
-			// mysqli result
+		if (stristr($query, 'select')) {
 			return $this->conn;
-		elseif ( preg_match('/insert|update|replace|delete/i', $query) )
+		} elseif ( preg_match('/insert|update|replace|delete/i', $query) ) {
 			return pg_affected_rows ($this->conn);
+		}
 	}
 
 	/**
