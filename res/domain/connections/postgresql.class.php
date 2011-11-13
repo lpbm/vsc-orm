@@ -1,31 +1,61 @@
 <?php
 import ('domain/connections');
-class postgreSql extends vscConnectionA {
+abstract class postgreSql extends vscConnectionA {
 	public 		$conn,
 				$link;
 
 	static public function isValid ($oLink) {
-		return true;// ($oLink instanceof mysqli);
+		return pg_connection_status($oLink) !== PGSQL_CONNECTION_OK;
 	}
 
+	public function isConnected () {
+		return (pg_connection_status($this->link) !== PGSQL_CONNECTION_OK);
+	}
+	
+	abstract protected function getDatabaseType();
+	
+	abstract protected function getDatabaseHost();
+	
+	abstract protected function getDatabaseUser();
+	
+	abstract protected function getDatabasePassword();
+	
+	abstract protected function getDatabaseName();
+	
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null , $dbName = null ){
 		if (!extension_loaded('pgsql')) {
-			return new nullSql();
+			throw new vscExceptionConnection ('Postgresql extension is not loaded.');
 		}
-		if (empty ($dbHost)) {
-			throw new vscExceptionConnection ('Database connection data missing: [DB_HOST]');
-		}
-
-		if (empty ($dbUser)) {
-			throw new vscExceptionConnection ('Database connection data missing: [DB_USER]');
-		}
-
-		if(empty($dbPass)) {
-			throw new vscExceptionConnection ('Database connection data missing: [DB_PASS]');
+		if ( empty ($dbHost) ) {
+			if ( is_null ($this->getDatabaseHost()) ) {
+				throw new vscExceptionConnection ('Database connection data missing: [DB_HOST]');
+			} else {
+				$dbHost = $this->getDatabaseHost();
+			}
 		}
 
-		if(empty($dbName)) {
-			throw new vscExceptionConnection ('Database connection data missing: [DB_NAME]');
+		if ( empty ($dbUser) ) {
+			if ( is_null ($this->getDatabaseUser()) ) {
+				throw new vscExceptionConnection ('Database connection data missing: [DB_USER]');
+			} else {
+				$dbUser = $this->getDatabaseUser();
+			}
+		}
+
+		if( empty($dbPass) ) {
+			if ( is_null ($this->getDatabasePassword()) ) {
+				throw new vscExceptionConnection ('Database connection data missing: [DB_PASS]');
+			} else {
+				$dbPass = $this->getDatabasePassword();
+			}
+		}
+
+		if( empty($dbName) ) {
+			if (is_null ($this->getDatabaseName()) ) {
+				throw new vscExceptionConnection ('Database connection data missing: [DB_NAME]');
+			} else {
+				$dbName = $this->getDatabaseName();
+			}
 		}
 
 		try {
@@ -45,18 +75,18 @@ class postgreSql extends vscConnectionA {
 	 *
 	 * @return bool
 	 */
-	private function connect ($dbHost = null, $dbUser = null, $dbPass = null , $dbName = null ) {
+	protected function connect ($dbHost = null, $dbUser = null, $dbPass = null , $dbName = null ) {
 		try {
 			$this->link	= pg_connect('host='.$dbHost.' user='. $dbUser.' password='.$dbPass . (!empty ($dbName) ? 'dbname='.$dbName : '' ));
 		} catch (ErrorException $e) {
 			$this->error = $e->getMessage();
-			trigger_error ($this->link->error, E_USER_ERROR);
+			trigger_error ($this->error, E_USER_ERROR);
 		}
-		if ($this->link) {
+		if (is_resource($this->link)) {
 			$err = pg_last_error($this->link);
 			if ($err) {
 				$this->error = $err;
-				trigger_error ($this->link->error, E_USER_ERROR);
+				trigger_error ($this->error, E_USER_ERROR);
 				return false;
 			}
 		}
@@ -95,7 +125,7 @@ class postgreSql extends vscConnectionA {
 		// to enclose values in quotes for MySQL
 		// TODO - this fracks up the postgres stuff
 		if (is_string($incData))
-			return pg_escape_string ($this->link, $incData);
+			return "'" . pg_escape_string ($this->link, $incData) . "'";
 		elseif (is_numeric ($incData))
 			return (int)$incData;
 	}
@@ -107,7 +137,7 @@ class postgreSql extends vscConnectionA {
 	 * @return mixed
 	 */
 	public function query ($query){
-		if (pg_connection_status($this->link) !== PGSQL_CONNECTION_OK) {
+		if ($this->isConnected()) {
 			return false;
 		}
 		if (!empty($query)) {
