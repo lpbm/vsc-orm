@@ -15,7 +15,7 @@
  * OBS: maybe the static methods (_AND, _OR, sa.) can be conained into
  *  an external object. (??!)
  */
-class mySqlIm extends vscConnectionA {
+abstract class mySqlIm extends vscConnectionA {
 	/**
 	 * @var mysqli_result
 	 */
@@ -29,28 +29,64 @@ class mySqlIm extends vscConnectionA {
 
 	private		$defaultSocketPath =  '/var/run/mysqld/mysqld.sock';
 
-	static public function isValidLink ($oLink) {
+	static public function isValid ($oLink) {
 		return ($oLink instanceof mysqli);
 	}
+
+	public function isConnected () {
+		return (!is_null($this->link->connect_error));
+	}
+
+	abstract protected function getDatabaseType();
+
+	abstract protected function getDatabaseHost();
+
+	abstract protected function getDatabaseUser();
+
+	abstract protected function getDatabasePassword();
+
+	abstract protected function getDatabaseName();
 
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null, $dbName = null ){
 		if (!extension_loaded('mysqli')) {
 			throw new vscExceptionConnection ('Database engine missing: mysqlim');
 		}
-		if (empty ($dbHost)) {
-			throw new vscExceptionConnection ('Database connection data missing: [DB_HOSTNAME]');
+	if ( empty ($dbHost) ) {
+			if ( is_null ($this->getDatabaseHost()) ) {
+				throw new vscExceptionConnection ('Database connection data missing: [DB_HOST]');
+			} else {
+				$dbHost = $this->getDatabaseHost();
+			}
 		}
 
-		if (empty ($dbUser)) {
-			throw new vscExceptionConnection ('Database connection data missing: [DB_USERNAME]');
+		if ( empty ($dbUser) ) {
+			if ( is_null ($this->getDatabaseUser()) ) {
+				throw new vscExceptionConnection ('Database connection data missing: [DB_USER]');
+			} else {
+				$dbUser = $this->getDatabaseUser();
+			}
+		}
+
+		if( empty($dbPass) ) {
+			if ( is_null ($this->getDatabasePassword()) ) {
+				throw new vscExceptionConnection ('Database connection data missing: [DB_PASS]');
+			} else {
+				$dbPass = $this->getDatabasePassword();
+			}
+		}
+
+		if( empty($dbName) ) {
+			if (is_null ($this->getDatabaseName()) ) {
+				throw new vscExceptionConnection ('Database connection data missing: [DB_NAME]');
+			} else {
+				$dbName = $this->getDatabaseName();
+			}
 		}
 
 		try {
 			$this->connect ($dbHost, $dbUser, $dbPass, $dbName);
-		} catch (vscExceptionConnection $e) {
-			throw $e;
 		} catch (Exception $e) {
-			// d($e);
+			_e($e);
 		}
 	}
 
@@ -60,6 +96,10 @@ class mySqlIm extends vscConnectionA {
 
 	public function getType () {
 		return vscConnectionType::mysql;
+	}
+
+	public function validResult ($oResource) {
+		return ($oResource instanceof mysqli_result);
 	}
 
 	/**
@@ -110,10 +150,15 @@ class mySqlIm extends vscConnectionA {
 	 * @return mixed
 	 */
 	public function escape ($incData){
-		if (is_string($incData))
-			return $this->link->escape_string($incData);
-		else
-			return $incData;
+		if (is_null ($incData)){
+			return 'NULL';
+		} elseif (is_int($incData)) {
+			return intval($incData);
+		} elseif (is_float($incData)) {
+			return floatval($incData);
+		} elseif (is_string($incData)) {
+			return "'" . $this->link->escape_string($incData) . "'";
+		}
 	}
 
 	public function getLastInsertId() {

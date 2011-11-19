@@ -11,17 +11,17 @@ abstract class postgreSql extends vscConnectionA {
 	public function isConnected () {
 		return (pg_connection_status($this->link) !== PGSQL_CONNECTION_OK);
 	}
-	
+
 	abstract protected function getDatabaseType();
-	
+
 	abstract protected function getDatabaseHost();
-	
+
 	abstract protected function getDatabaseUser();
-	
+
 	abstract protected function getDatabasePassword();
-	
+
 	abstract protected function getDatabaseName();
-	
+
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null , $dbName = null ){
 		if (!extension_loaded('pgsql')) {
 			throw new vscExceptionConnection ('Postgresql extension is not loaded.');
@@ -69,6 +69,9 @@ abstract class postgreSql extends vscConnectionA {
 		return vscConnectionType::postgresql;
 	}
 
+	public function validResult ($oResource) {
+		return (is_resource($oResource) && get_resource_type($oResource) == 'pgsql result');
+	}
 
 	/**
 	 * wrapper for pg_connect
@@ -124,10 +127,15 @@ abstract class postgreSql extends vscConnectionA {
 		// also there's a problem with the fact that I use tdoAbstract->escape
 		// to enclose values in quotes for MySQL
 		// TODO - this fracks up the postgres stuff
-		if (is_string($incData))
+		if (is_null ($incData)){
+			return 'NULL';
+		} elseif (is_int($incData)) {
+			return intval($incData);
+		} elseif (is_float($incData)) {
+			return floatval($incData);
+		} elseif (is_string($incData)) {
 			return "'" . pg_escape_string ($this->link, $incData) . "'";
-		elseif (is_numeric ($incData))
-			return (int)$incData;
+		}
 	}
 
 	/**
