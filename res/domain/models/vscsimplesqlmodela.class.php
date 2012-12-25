@@ -11,6 +11,11 @@ import ('domain/domain');
 import ('domain/models');
 
 class vscSimpleSqlModelA extends vscModelA implements vscDomainObjectI {
+	final public function __construct () {
+		$this->buildObject();
+		$this->__init();
+		parent::__construct ();
+	}
 	public function __get ($sVarName) {
 		try {
 			return $this->getDomainObject()->__get($sVarName);

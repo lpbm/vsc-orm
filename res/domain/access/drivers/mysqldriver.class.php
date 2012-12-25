@@ -7,20 +7,6 @@ class mySQLDriver extends SQLGenericDriver {
 		$TRUE = '1',
 		$FALSE = '0';
 
-	/**
-	 *
-	 * @param array $incObj = array (array('field1','alias1),array('field2','alias2),...)
-	 * @return unknown
-	 */
-	public function _SELECT ($incObj){
-		if (empty ($incObj)) {
-			return '';
-		}
-
-		$retStr = 'SELECT ';
-		return $retStr . ' ' . $incObj . ' ';
-	}
-
 	public function _DELETE($sIncName) {
 		return ' DELETE FROM ' . $sIncName . ' ';
 	}
@@ -78,8 +64,13 @@ class mySQLDriver extends SQLGenericDriver {
 	public function _OR (){
 		return ' OR ';
 	}
+
 	public function _JOIN ($type) {
 		return $type . ' JOIN ';
+	}
+
+	public function _ON ($subject, $predicate, $predicative) {
+		return ' ON ' . $subject . ' '. $predicate . ' ' . $predicative;
 	}
 
 	/**
@@ -115,13 +106,23 @@ class mySQLDriver extends SQLGenericDriver {
 		return $retStr.' '.$incObj;
 	}
 
-	public function _ORDER ($orderBys = null){
+	public function _ORDER ($orderBys = null, $aDirections = null){
 		if (empty($orderBys)) {
 			return '';
 		}
-		$retStr = ' ORDER BY ';
+		$sOrderBys = '';
+		if (!is_array($orderBys)) {
+			$orderBys = array($orderBys);
+		}
 
-		return $retStr.$orderBys;
+		foreach ($orderBys as $key => $sField) {
+			$sOrderBys .= $this->FIELD_OPEN_QUOTE . $sField . $this->FIELD_CLOSE_QUOTE . ' ';
+			if (is_array ($aDirections)) {
+				$sOrderBys .= isset($aDirections[$key]) ? $aDirections[$key] : '';
+			}
+		}
+
+		return ' ORDER BY ' . $sOrderBys;
 	}
 
 	public function _WHERE ($clause) {

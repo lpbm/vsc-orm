@@ -15,7 +15,7 @@
  * OBS: maybe the static methods (_AND, _OR, sa.) can be conained into
  *  an external object. (??!)
  */
-abstract class mySqlIm extends vscConnectionA {
+class mySqlIm extends vscConnectionA {
 	/**
 	 * @var mysqli_result
 	 */
@@ -29,14 +29,14 @@ abstract class mySqlIm extends vscConnectionA {
 
 	private		$defaultSocketPath =  '/var/run/mysqld/mysqld.sock';
 
-	static public function isValid ($oLink) {
+	static public function isValidLink ($oLink) {
 		return ($oLink instanceof mysqli);
 	}
 
 	public function isConnected () {
 		return (!is_null($this->link->connect_error));
 	}
-
+/*/
 	abstract protected function getDatabaseType();
 
 	abstract protected function getDatabaseHost();
@@ -46,12 +46,12 @@ abstract class mySqlIm extends vscConnectionA {
 	abstract protected function getDatabasePassword();
 
 	abstract protected function getDatabaseName();
-
+/**/
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null, $dbName = null ){
 		if (!extension_loaded('mysqli')) {
 			throw new vscExceptionConnection ('Database engine missing: mysqlim');
 		}
-	if ( empty ($dbHost) ) {
+		if ( empty ($dbHost) ) {
 			if ( is_null ($this->getDatabaseHost()) ) {
 				throw new vscExceptionConnection ('Database connection data missing: [DB_HOST]');
 			} else {
@@ -75,14 +75,14 @@ abstract class mySqlIm extends vscConnectionA {
 			}
 		}
 
-		if( empty($dbName) ) {
-			if (is_null ($this->getDatabaseName()) ) {
-				throw new vscExceptionConnection ('Database connection data missing: [DB_NAME]');
-			} else {
-				$dbName = $this->getDatabaseName();
-			}
+		if( !is_null($dbName) ) {
+//			if (is_null ($this->getDatabaseName()) ) {
+//				throw new vscExceptionConnection ('Database connection data missing: [DB_NAME]');
+//			} else {
+//				$dbName = $this->getDatabaseName();
+//			}
+//		} else {
 		}
-
 		try {
 			$this->connect ($dbHost, $dbUser, $dbPass, $dbName);
 		} catch (Exception $e) {
@@ -107,7 +107,7 @@ abstract class mySqlIm extends vscConnectionA {
 	 *
 	 * @return bool
 	 */
-	private function connect ($dbHost = null, $dbUser = null, $dbPass = null, $dbName = null ) {
+	protected function connect ($dbHost = null, $dbUser = null, $dbPass = null, $dbName = null ) {
 		$this->link	= new mysqli ($dbHost, $dbUser, $dbPass, $dbName, null, $this->defaultSocketPath);
 		if (!empty($this->link->connect_errno)) {
 			$this->error = $this->link->connect_errno . ' ' . $this->link->connect_error;
@@ -139,7 +139,8 @@ abstract class mySqlIm extends vscConnectionA {
 		if (self::isValidLink($this->link) && $this->link->select_db($incData)) {
 			return true;
 		} else {
-			throw new vscExceptionConnection($this->link->error . ' ['.$this->link->errno . ']');
+
+			throw new vscExceptionConnection($this->error);
 		}
 	}
 
@@ -183,8 +184,7 @@ abstract class mySqlIm extends vscConnectionA {
 			return false;
 
 		if ($this->link->errno)	{
-			throw new vscExceptionConnection ($this->link->error. vscString::nl() . $query . vscString::nl ());
-			return false;
+			throw new vscExceptionConnection ($this->link->error. vscString::nl() . '<pre>' . $query . '</pre>' . vscString::nl ());
 		}
 
 		$iReturn =  $this->link->affected_rows;

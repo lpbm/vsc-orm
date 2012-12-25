@@ -6,7 +6,7 @@
  * @date 09.05.01
  */
 
-import (VSC_LIB_PATH . 'domain/domain/fields');
+import ('domain/domain/fields');
 
 class vscFieldDateTime extends vscFieldA {
 	protected  $maxLength = null; // arbitrary chosen, > strlen(YYYY-MM-DD GG:II:SS)

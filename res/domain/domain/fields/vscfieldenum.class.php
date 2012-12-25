@@ -5,7 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 09.05.13
  */
-import (VSC_LIB_PATH . 'domain/domain/fields');
+import (ORM_LIB_PATH . 'domain/domain/fields');
 
 class vscFieldEnum extends vscFieldA {
 	protected $values = array();

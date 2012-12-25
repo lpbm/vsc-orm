@@ -9,8 +9,8 @@
  * @date 09.02.26
  */
 import (VSC_LIB_PATH . 'domain/models');
-import (VSC_RES_PATH . 'domain/domain/fields');
-import (VSC_RES_PATH . 'domain/domain/indexes');
+import (ORM_RES_PATH . 'domain/domain/fields');
+import (ORM_RES_PATH . 'domain/domain/indexes');
 
 abstract class vscDomainObjectA extends vscModelA implements vscDomainObjectI {
 	protected 	$sTableName;
@@ -76,7 +76,7 @@ abstract class vscDomainObjectA extends vscModelA implements vscDomainObjectI {
 	public function setTableAlias ($sAlias) {
 		$this->sTableAlias = $sAlias;
 		foreach ($this->getFields() as $oField) {
-			$oField->setAlias($sAlias . '_' . $oField->getName());
+			$oField->setAlias($sAlias . ':' . $oField->getName());
 		}
 	}
 

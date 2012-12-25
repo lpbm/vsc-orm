@@ -29,6 +29,27 @@ class vscSqlAccess extends vscSqlAccessA {
 		$this->oFactory->setConnection($this->getConnection());
 	}
 
+	static protected function getDomainObjects ($aParameters) {
+		if (is_array($aParameters) && count($aParameters) == 1 && is_array($aParameters[0])) {
+			$aParameters = $aParameters[0];
+		}
+
+		$aDomainObjects = array();
+		foreach ($aParameters as $key => $oParameter) {
+			if (vscCompositeSqlModelA::isValid($oParameter)) {
+				unset ($aParameters[$key]);
+				/* @var $oParameter vscCompositeSqlModelA */
+				$aDomainObjects = array_merge ($aDomainObjects, $oParameter->getDomainObjects());
+			}
+		}
+
+		if (count ($aDomainObjects) < 1) {
+			$aDomainObjects = $aParameters;
+		}
+
+		return $aDomainObjects;
+	}
+
 	public function getDatabaseType() {
 		throw new vscExceptionDomain('Please implement ['. __METHOD__ . '] in a child class.');
 	}
@@ -89,6 +110,8 @@ class vscSqlAccess extends vscSqlAccessA {
 				$aRet[$oField->getName()] = $this->getAccess($oField)->escapeValue($oField);
 			} catch (vscExceptionConstraint $e) {
 				//
+			} catch (vscExceptionError $e) {
+				d ($e, $oField, $this->getAccess($oField));
 			}
 		}
 		return $aRet;
@@ -180,30 +203,31 @@ class vscSqlAccess extends vscSqlAccessA {
 		$aParameters = func_get_args();
 		$aSelects = $aNames = array ();
 
-		if (is_array($aParameters) && count($aParameters) == 1 && is_array($aParameters[0])) {
-			$aParameters = $aParameters[0];
-		}
+		$aDomainObjects = static::getDomainObjects($aParameters);
 
-		foreach ($aParameters as $key => $oParameter) {
-			if (!vscDomainObjectA::isValid($oParameter)) {
-				unset ($aParameters[$key]);
-				continue;
+		$cnt = count($this->aJoins);
+		foreach ($aDomainObjects as $key => $oParameter) {
+			if (vscDomainObjectA::isValid($oParameter)) {
+				/* @var $oParameter vscDomainObjectA */
+				if (!$oParameter->hasTableAlias()) {
+					$oParameter->setTableAlias('t' . $cnt++);
+				}
+				$aSelects[] =  $this->getFieldsForSelect($oParameter, true);
+
+				if (!$this->tableIsJoined($oParameter) || $oParameter->getTableAlias() == 't0') {
+					$aNames[] = $this->getTableName($oParameter, true);
+				}
+				$this->buildDefaultClauses($oParameter);
 			}
-			/* @var $oParameter vscDomainObjectA */
-			$oParameter->setTableAlias('t'.$key);
-			$aSelects[] =  $this->getFieldsForSelect($oParameter, true);
-
-			$aNames[] = $this->getTableName($oParameter, true);
-			$this->buildDefaultClauses($oParameter);
 		}
 
 		$aWheres = array();
 
 		$o = $this->getDriver();
 
-		$sRet = $o->_SELECT (implode (', ', $aSelects)) .
+		$sRet = $o->_SELECT (implode (',' . "\n\t", $aSelects)) . "\n" .
 		$o->_FROM(implode (', ', $aNames)) ."\n" .
-		//$this->getJoinsString() .
+		$this->getJoinsString() .
 		$o->_WHERE($this->getClausesString ()) .
 		$this->getGroupByString() .
 		$this->getOrderByString() .
@@ -263,10 +287,10 @@ class vscSqlAccess extends vscSqlAccessA {
 		foreach ($oDomainObject->getFields() as $oField) {
 			if ($bAllFields || is_null($oField->getValue())) {
 				$sFieldSelect = ($oDomainObject->hasTableAlias() ? $o->FIELD_OPEN_QUOTE . $oDomainObject->getTableAlias() . $o->FIELD_CLOSE_QUOTE . '.' : '') .
-					$o->FIELD_OPEN_QUOTE . $oField->getName() . $o->FIELD_CLOSE_QUOTE;
+				$o->FIELD_OPEN_QUOTE . $oField->getName() . $o->FIELD_CLOSE_QUOTE;
 
 				if ($this->hasFieldAggregatorFunction($oField)) {
-					 $sFieldSelect = sprintf($this->getFieldAggregatorFunction($oField), $sFieldSelect);
+					$sFieldSelect = sprintf($this->getFieldAggregatorFunction($oField), $sFieldSelect);
 				}
 				$aSelectFields[] = $sFieldSelect . ($bWithAlias && $oField->hasAlias() ? $o->_AS($o->FIELD_OPEN_QUOTE . $oField->getAlias(). $o->FIELD_CLOSE_QUOTE) : '');
 			}
@@ -294,7 +318,8 @@ class vscSqlAccess extends vscSqlAccessA {
 		/* @var $oField vscFieldA */
 		foreach ($oDomainObject->getFields() as $oField) {
 			if ($oField->hasValue()) {
-				$aWheres[]	= new vscClause($oField, '=', $oField->getValue());
+				// outputing only clauses not in a join
+				$aWheres[]	= new vscClause ($oField, '=', $oField->getValue());
 			}
 		}
 
@@ -313,37 +338,25 @@ class vscSqlAccess extends vscSqlAccessA {
 	 */
 	public function loadByFilter () { // this shold be moved to the composite model
 		$aParameters = func_get_args();
-		if (count($aParameters) == 1 && is_array ($aParameters[0])) {
-			// in case we send the domain objects inside an array instead of sepparate parameters
-			$aParameters = $aParameters[0];
-		}
-
-		$aSelects = $aNames = array ();
-
-		foreach ($aParameters as $key => $oParameter) {
-			if (!($oParameter instanceof vscDomainObjectI)) {
-				unset ($aParameters[$key]);
-			}
-		}
-
 		$aRet = array();
 		$aTotalValues =  array();
 
 		// this allows to call the self::outputSelectSql function with the parameters received
 		// replaces the previous call : $this->outputSelectSql($aParameters); // where $aParameters was an array
-		$sSelect = $this->outputSelectSql($aParameters);
+		$aParameters = static::getDomainObjects($aParameters);
 
+		$sSelect = $this->outputSelectSql($aParameters);
 		$iNumRows = $this->getConnection()->query($sSelect);
 
 		foreach ($aParameters as $oParameter) {
 			$sLabel = $oParameter->getTableAlias() ? $oParameter->getTableAlias() : $oParameter->getTableName();
 			$aTypes[$sLabel] = get_class($oParameter);
 		}
-
 		for ($i = 0; $i < $iNumRows; $i++) {
-			foreach ($this->getConnection()->getAssoc() as $sKey => $sValue) {
-				$sTableAlias	= substr($sKey, 0, strpos($sKey, '.'));
-				$sFieldName 	= substr($sKey, strpos($sKey, '.')+1);
+			$aAssoc = $this->getConnection()->getAssoc();
+			foreach ($aAssoc as $sKey => $sValue) {
+				$sTableAlias	= substr($sKey, 0, strpos($sKey, ':'));
+				$sFieldName 	= substr($sKey, strpos($sKey, ':')+1);
 
 				$aTotalValues[$sTableAlias][$i][$sFieldName] = $sValue;
 			}
@@ -486,7 +499,7 @@ class vscSqlAccess extends vscSqlAccessA {
 		if (($mSubject instanceof vscClause) && ($sPredicate == null || $mPredicative == null)) {
 			$w = $mSubject;
 		} elseif (!is_null ($mSubject)) {
-			$w = new vscClause($mSubject, $this->getConnection()->escape($sPredicate), $mPredicative);
+			$w = new vscClause($mSubject, $sPredicate, $mPredicative);
 		} else {
 			throw new vscException('Trying to add an empty where clause');
 		}
@@ -497,12 +510,35 @@ class vscSqlAccess extends vscSqlAccessA {
 		return $this;
 	}
 
-	public function join (vscFieldA $oLeftField, vscFieldA $oRightField) {
-		$w = new vscJoinInner($oLeftField, $oRightField);
+	public function outerJoin (vscFieldA $oLeftField, vscFieldA $oRightField) {
+		$w = new vscJoinOuter($oLeftField, $oRightField);
 		if (!in_array ($w, $this->aJoins/*, true*/)) {
 			$this->aJoins[]	= $w;
 		}
-		$this->where ($oLeftField, '=', $oRightField);
+		//$this->where ($oLeftField, '=', $oRightField);
+		return $this;
+	}
+
+	public function join (vscFieldA $oLeftField, vscFieldA $oRightField = null, $iJoinType = null) {
+		// @fixme : must validate fields??
+		$w = new vscJoin ($oLeftField, $oRightField, $iJoinType);
+		if (!in_array ($w, $this->aClauses/*, true*/)) {
+			$this->aClauses[]	= $w;
+		}
+		/* if (!in_array($oLeftField->getParent(), $this->aJoins)) {
+			$sAlias = 't' . count ($this->aJoins);
+			$oLeftField->getParent()->setTableAlias ($sAlias);
+			$this->aJoins[$sAlias]	= $oLeftField->getParent();
+		} */
+		if (!is_null($oRightField) && !in_array($oRightField->getParent(), $this->aJoins)) {
+			$sAlias = 't' . count ($this->aJoins);
+			$oRightField->getParent()->setTableAlias ($sAlias);
+			$this->aJoins[$sAlias]	= $oRightField->getParent();
+		} elseif (!in_array($oLeftField->getParent(), $this->aJoins)) {
+			$sAlias = 't' . count ($this->aJoins);
+			$oLeftField->getParent()->setTableAlias ($sAlias);
+			$this->aJoins[$sAlias]	= $oLeftField->getParent();
+		}
 		return $this;
 	}
 
@@ -530,7 +566,7 @@ class vscSqlAccess extends vscSqlAccessA {
 	}
 
 	public function getLimitString() {
-		return $this->getConnection()->_LIMIT ($this->iStart, $this->iCount);
+		return $this->getDriver()->_LIMIT ($this->iStart, $this->iCount);
 	}
 
 	public function groupBy (vscFieldA $oField) {
@@ -548,8 +584,8 @@ class vscSqlAccess extends vscSqlAccessA {
 		}
 		if (!key_exists($oField->getName(), $this->aOrderBys)) {
 			$this->aOrderBys[$oField->getName()] =  array (
-			$oField,
-			$sDirection
+					$oField,
+					$sDirection
 			);
 		}
 		return $this;
@@ -569,29 +605,51 @@ class vscSqlAccess extends vscSqlAccessA {
 	}
 
 	public function getOrderByString () {
-		$sOrderBy = '';
+		$aOrderBys = '';
 		if (count ($this->aOrderBys) > 0 ) {
 			foreach ($this->aOrderBys as $aOrderBy) {
 				$oField = $aOrderBy[0];
 				$sDirection = $aOrderBy[1];
-				$sOrderBy = ($oField->hasAlias() ? $oField->getAlias() : $oField->getName()) . ' '. $sDirection ;
+				$aOrderBys[] = ($oField->hasAlias() ? $oField->getAlias() : $oField->getName()) ;
 			}
 
-			return $this->getDriver()->_ORDER($sOrderBy);
+			return $this->getDriver()->_ORDER($aOrderBys, $sDirection);
 		} else {
 			return '';
 		}
 	}
 
+	public function tableIsJoined (vscDomainObjectA $oTable) {
+		return isset($this->aJoins[$oTable->getTableAlias()]);
+	}
+
 	public function getJoinsString () {
 		$sStr = '';
 		$aStrJoins = array();
-		if (count ($this->aJoins) > 0 ) {
-			foreach ($this->aJoins as $oJoin) {
-				$aStrJoins[] .= $this->getAccess($oJoin)->getDefinition($oJoin);
+		$aTables = array () ;
+		if (count ($this->aClauses) > 0 ) {
+			/* @var $oJoin vscJoin */
+			foreach ($this->aClauses as $oJoin) {
+				if (vscJoin::isValid($oJoin)) {
+					$oJoinField = $oJoin->getRight();
+					$oJoinOnField = $oJoin->getLeft();
+
+					if (!vscFieldA::isValid($oJoinField)) {
+						$oJoinField = $oJoin->getLeft();
+					}
+					$oJoinedTable = $oJoinField->getParent();
+					if (!$this->tableIsJoined($oJoinedTable)) {
+						$aTables [] = $oJoinedTable;
+						$ajoins[] = $oJoin;
+						$sAlias = $oJoinedTable->getTableAlias();
+						if (!array_search($sAlias, $aStrJoins)) {
+							$aStrJoins[$sAlias] = $this->getAccess($oJoin)->getDefinition($oJoin);
+						}
+					}
+				}
 			}
 
-			$sStr = implode (', ', $aStrJoins);
+			$sStr = implode ("\t\n", $aStrJoins);
 		}
 
 		return $sStr;
@@ -601,45 +659,45 @@ class vscSqlAccess extends vscSqlAccessA {
 	 * Outputs the SQL necessary for creating the table
 	 * @return string
 	 */
-//	public function outputCreateTableSQL (vscDomainObjectI $oDomainObject) {
-//		if ($this->getConnection()->getType() == vscConnectionType::mysql){
-//			$bFullText = false;
-//		}
-//
-//		$sRet = $this->getConnection()->_CREATE ($oDomainObject->getTableName()) . "\n";
-//		$sRet .= ' ( ' . "\n";
-//
-//		/* @var $oColumn vscFieldA */
-//		foreach ($oDomainObject->getFields () as $oColumn) {
-//			$sRet .= "\t" . $oColumn->getName() . ' ' . $this->getAccess($oColumn)->getDefinition($oColumn) ;
-//			$sRet .= ', ' . "\n";
-//		}
-//
-//		$aIndexes = $oDomainObject->getIndexes(true);
-//		if (is_array ($aIndexes) && !empty($aIndexes)) {
-//			foreach ($aIndexes as $oIndex) {
-//				if (vscIndexA::isValid($oIndex)) {
-//					// checking for fulltext indexes
-//					if ($this->getConnection()->getType() == vscConnectionType::mysql && !$bFullText && vscKeyFullText::isValid($oIndex)){
-//						$bFullText	= true;
-//						$sEngine	= 'MyISAM';
-//					} elseif ($this->getConnection()->getType() == vscConnectionType::mysql) {
-//						$sEngine	= $this->getConnection()->getEngine();
-//					}
-//					// this needs to be replaced with connection functionality : something like getConstraint (type, columns)
-//					$sRet .=  "\t" . $this->getAccess($oIndex)->getDefinition($oIndex) . ", \n";
-//				}
-//			}
-//		}
-//
-//		$sRet = substr( $sRet, 0, -3 );
-//
-//		$sRet.= "\n" . ' ) ';
-//
-//		if ($this->getConnection()->getType() == vscConnectionType::mysql) {
-//			$sRet.= ' ENGINE ' . $sEngine;
-//		}
-//
-//		return $sRet . ';';
-//	}
+	//	public function outputCreateTableSQL (vscDomainObjectI $oDomainObject) {
+	//		if ($this->getConnection()->getType() == vscConnectionType::mysql){
+	//			$bFullText = false;
+	//		}
+	//
+	//		$sRet = $this->getConnection()->_CREATE ($oDomainObject->getTableName()) . "\n";
+	//		$sRet .= ' ( ' . "\n";
+	//
+	//		/* @var $oColumn vscFieldA */
+	//		foreach ($oDomainObject->getFields () as $oColumn) {
+	//			$sRet .= "\t" . $oColumn->getName() . ' ' . $this->getAccess($oColumn)->getDefinition($oColumn) ;
+	//			$sRet .= ', ' . "\n";
+	//		}
+	//
+	//		$aIndexes = $oDomainObject->getIndexes(true);
+	//		if (is_array ($aIndexes) && !empty($aIndexes)) {
+	//			foreach ($aIndexes as $oIndex) {
+	//				if (vscIndexA::isValid($oIndex)) {
+	//					// checking for fulltext indexes
+	//					if ($this->getConnection()->getType() == vscConnectionType::mysql && !$bFullText && vscKeyFullText::isValid($oIndex)){
+	//						$bFullText	= true;
+	//						$sEngine	= 'MyISAM';
+	//					} elseif ($this->getConnection()->getType() == vscConnectionType::mysql) {
+	//						$sEngine	= $this->getConnection()->getEngine();
+	//					}
+	//					// this needs to be replaced with connection functionality : something like getConstraint (type, columns)
+	//					$sRet .=  "\t" . $this->getAccess($oIndex)->getDefinition($oIndex) . ", \n";
+	//				}
+	//			}
+	//		}
+	//
+	//		$sRet = substr( $sRet, 0, -3 );
+	//
+	//		$sRet.= "\n" . ' ) ';
+	//
+	//		if ($this->getConnection()->getType() == vscConnectionType::mysql) {
+	//			$sRet.= ' ENGINE ' . $sEngine;
+	//		}
+	//
+	//		return $sRet . ';';
+	//	}
 }

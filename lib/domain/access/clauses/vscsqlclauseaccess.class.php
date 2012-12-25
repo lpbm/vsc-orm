@@ -6,9 +6,26 @@
  * @date 2010.06.01
  */
 class vscSqlClauseAccess extends vscObject {
+	private $oConnection;
 	private $oGrammarHelper;
+
 	/**
 	 * @param vscConnectionA $oConnection
+	 * @return void
+	 */
+	public function setConnection ($oConnection) {
+		$this->oConnection = $oConnection;
+	}
+
+	/**
+	 * @return vscConnectionA
+	 */
+	public function getConnection () {
+		return $this->oConnection;
+	}
+
+	/**
+	 * @param vscGrammarHelper $oGrammarHelper
 	 * @return void
 	 */
 	public function setGrammarHelper ($oGrammarHelper) {
@@ -16,22 +33,23 @@ class vscSqlClauseAccess extends vscObject {
 	}
 
 	/**
-	 * @return vscConnectionA
+	 * @return vscGrammarHelperA
 	 */
-	public function getConnection () {
+	public function getGrammarHelper () {
 		return $this->oGrammarHelper;
 	}
 
 
 	public function getDefinition (vscClause $oClause) {
+		$verb = null;
 		if (is_string($oClause->getSubject())) {
 			return $oClause->getSubject();
 		} elseif ($oClause->getSubject() instanceof vscClause) {
 			$subStr = $this->getDefinition($oClause->getSubject ());
 		} elseif (vscFieldA::isValid($oClause->getSubject())) {
-			$subStr =  ($oClause->getSubject()->getTableAlias() ?
-				$this->getConnection()->FIELD_OPEN_QUOTE . $oClause->getSubject()->getTableAlias() . $this->getConnection()->FIELD_CLOSE_QUOTE . '.': '') .
-				$this->getConnection()->FIELD_OPEN_QUOTE . $oClause->getSubject()->getName() . $this->getConnection()->FIELD_CLOSE_QUOTE;
+			$subStr = ($oClause->getSubject()->getTableAlias() ?
+				$this->getGrammarHelper()->FIELD_OPEN_QUOTE . $oClause->getSubject()->getTableAlias() . $this->getGrammarHelper()->FIELD_CLOSE_QUOTE . '.': '') .
+				$this->getGrammarHelper()->FIELD_OPEN_QUOTE . $oClause->getSubject()->getName() . $this->getGrammarHelper()->FIELD_CLOSE_QUOTE;
 		} else {
 			return '';
 		}
@@ -51,19 +69,19 @@ class vscSqlClauseAccess extends vscObject {
 				$preStr = '%'.$preStr.'%';
 			}
 
-			$preStr = (stripos($preStr, '"') !== 0 ? '"'.$preStr.'"' : $preStr);//'"'.$preStr.'"';
+			//$preStr = (stripos($preStr, '"') !== 0 ? '"'.$preStr.'"' : $preStr);//'"'.$preStr.'"';
 		} elseif (is_array($oClause->getPredicative ())) {
 			//FIXME: escape elements of the predicative array
 			$preStr =  '("'.implode('", "',$oClause->getPredicative ()).'")';
 		} elseif ($oClause->getPredicative () instanceof vscFieldA) {
-			$preStr = ($oClause->getPredicative()->getTableAlias() != 't' ? $this->getConnection()->FIELD_OPEN_QUOTE . $oClause->getPredicative()->getTableAlias() . $this->getConnection()->FIELD_CLOSE_QUOTE .'.': '').
-					$this->getConnection()->FIELD_OPEN_QUOTE . $oClause->getPredicative()->getName(). $this->getConnection()->FIELD_CLOSE_QUOTE;
+			$preStr = ($oClause->getPredicative()->getTableAlias() != 't' ? $this->getGrammarHelper()->FIELD_OPEN_QUOTE . $oClause->getPredicative()->getTableAlias() . $this->getGrammarHelper()->FIELD_CLOSE_QUOTE .'.': '').
+					$this->getGrammarHelper()->FIELD_OPEN_QUOTE . $oClause->getPredicative()->getName(). $this->getGrammarHelper()->FIELD_CLOSE_QUOTE;
 		} elseif ($oClause->getPredicative () instanceof vscClause) {
 			$subStr = $subStr;
 			$preStr = $oClause->getPredicative ();
 		}
 
-		$retStr = $subStr.' '.$oClause->getPredicate().' '.$preStr;
+		$retStr = $subStr.' ' . $oClause->getPredicate() . ' '.$preStr;
 		if (($oClause->getSubject () instanceof vscClause) && ($oClause->getPredicative () instanceof vscClause))
 			return '('.$retStr.')';
 

@@ -12,11 +12,9 @@ import ('domain/connections');
 
 abstract class vscCompositeSqlModelA extends vscSimpleSqlModelA implements vscCompositeDomainObjectI {
 	private $oConnection;
+	private $oHelper;
 
-	public function __construct () {
-		parent::__construct();
-		$this->__init();
-	}
+	private $aDomainLinks;
 
 	public function getDomainObjects () {
 		$oRef = new ReflectionObject($this);
@@ -54,14 +52,14 @@ abstract class vscCompositeSqlModelA extends vscSimpleSqlModelA implements vscCo
 	}
 
 	public function __init(){
-		$this->oConnection = vscConnectionFactory::connect(
-			$this->getDatabaseType(),
-			$this->getDatabaseHost(),
-			$this->getDatabaseUser(),
-			$this->getDatabasePassword()
-		);
+// 		$this->oConnection = vscConnectionFactory::connect(
+// 			$this->getDatabaseType(),
+// 			$this->getDatabaseHost(),
+// 			$this->getDatabaseUser(),
+// 			$this->getDatabasePassword()
+// 		);
 
-		$this->oConnection->selectDatabase($this->getDatabaseName());
+// 		$this->oConnection->selectDatabase($this->getDatabaseName());
 	}
 
 	//	abstract protected function buildObject();

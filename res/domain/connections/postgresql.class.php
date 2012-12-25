@@ -5,7 +5,7 @@ abstract class postgreSql extends vscConnectionA {
 				$link;
 
 	static public function isValid ($oLink) {
-		return pg_connection_status($oLink) !== PGSQL_CONNECTION_OK;
+		return !is_null($oLink) && pg_connection_status($oLink) !== PGSQL_CONNECTION_OK;
 	}
 
 	public function isConnected () {

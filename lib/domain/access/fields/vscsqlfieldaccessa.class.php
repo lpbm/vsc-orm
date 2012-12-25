@@ -5,26 +5,17 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.05.29
  */
-class vscSqlFieldAccessA extends vscObject {
-	private $oConnection;
-
-	public function setConnection (vscConnectionA $oConnection) {
-		$this->oConnection = $oConnection;
-	}
-
-	public function getConnection () {
-		return $this->oConnection;
-	}
-
+abstract class vscSqlFieldAccessA extends vscAccessEntityA {
 	public function escapeValue (vscFieldA $oField) {
-		$o = $this->getConnection();
+		/* @var $o sqlDriverA */
+		$o = $this->getGrammarHelper();
 		$mValue	=  $this->getConnection()->escape($oField->getValue());
 
-		if (is_null($mValue)) {
+		if (is_null($mValue) || $mValue == 'NULL') {
 			return $o->_NULL(true);
 		} elseif (is_numeric($mValue)) {
 			$sCondition = $mValue;
-		} elseif (is_string($mValue)) {
+		} elseif (is_string($mValue) ) {
 			// this should be moved to the sql driver
 			$sCondition = $o->STRING_OPEN_QUOTE . $mValue . $o->STRING_CLOSE_QUOTE;
 		}
@@ -36,9 +27,9 @@ class vscSqlFieldAccessA extends vscObject {
 
 		$sRet = $this->getType($oField);
 		if (!$oField->getIsNullable()) {
-			$sRet .= $this->getConnection()->_NULL($oField->getIsNullable());
+			$sRet .= $this->getGrammarHelper()->_NULL($oField->getIsNullable());
 		} elseif ($oField->getDefaultValue() === null) {
-			$sRet .= ' DEFAULT ' . $this->getConnection()->_NULL(true);
+			$sRet .= ' DEFAULT ' . $this->getGrammarHelper()->_NULL(true);
 		} elseif ($oField->hasDefaultValue()) {
 			$sRet .= ' DEFAULT ' . $oField->getDefaultValue();
 		}
@@ -52,7 +43,7 @@ class vscSqlFieldAccessA extends vscObject {
 	}
 
 	public function getQuotedFieldName (vscFieldA $oField) {
-		$o = $this->getConnection();
+		$o = $this->getGrammarHelper();
 
 		return $o->FIELD_OPEN_QUOTE . $oField->getName() . $o->FIELD_CLOSE_QUOTE;
 	}

@@ -6,7 +6,7 @@
  * @date 09.05.29
  */
 
-import (VSC_LIB_PATH . 'domain/access/fields');
+import ('domain/access/fields');
 
 class vscFieldDateTimeAccess extends vscSqlFieldAccessA {
 	public function getType (vscFieldA $oField) {

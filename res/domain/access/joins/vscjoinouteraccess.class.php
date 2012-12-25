@@ -6,6 +6,6 @@
  */
 class vscJoinOuterAccess extends vscSqlJoinAccessA {
 	public function getType () {
-		return 'OUTER';
+		return 'LEFT';
 	}
 }

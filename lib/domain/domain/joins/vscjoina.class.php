@@ -4,15 +4,14 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.06.02
  */
-class vscJoinA extends vscObject {
-	private	$oLeftField;
-	private	$oRightField;
+class vscJoinA extends vscClause {
+	private $iType = vscJoinType::INNER;
 
 	public function getLeft() {
-		return $this->oLeftField;
+		return $this->getSubject();
 	}
 	public function getRight() {
-		return $this->oRightField;
+		return $this->getPredicative();
 	}
 
 	/**
@@ -21,12 +20,18 @@ class vscJoinA extends vscObject {
 	 * @param vscFieldA $oLeftField
 	 * @param vscFieldA $oRightField
 	 */
-	public function __construct (vscFieldA $oLeftField, vscFieldA $oRightField) {
-		$this->oLeftField = $oLeftField;
-		$this->oRightField = $oRightField;
+	public function __construct (vscFieldA $oLeftField, vscFieldA $oRightField = null, $iType = null) {
+		parent::__construct($oLeftField, '=', $oRightField);
+		if (!is_null($iType)) {
+			$this->setType ($iType);
+		}
+	}
+
+	public function setType ($iType) {
+		$this->iType = $iType;
 	}
 
 	public function getType () {
-		return vscJoinType::INNER;
+		return $this->iType;
 	}
 }

@@ -8,6 +8,7 @@
  */
 
 import ('access/drivers');
+import ('access/fields');
 class vscAccessFactory extends vscObject {
 	 private $oConnection;
 
@@ -22,6 +23,7 @@ class vscAccessFactory extends vscObject {
 	 private $oFieldInteger;
 	 private $oFieldText;
 	 private $oFieldDate;
+	 private $oFieldDecimal;
 	 private $oFieldEnum;
 
 	 private $oClause;
@@ -51,12 +53,14 @@ class vscAccessFactory extends vscObject {
 	 }
 
 	 public function getField (vscFieldA $oField) {
+	 	$oConnection = $this->getConnection();
 		switch ($oField->getType()) {
 			case (vscFieldType::INTEGER):
 			case ('integer'):
 				if (!($this->oFieldInteger instanceof vscFieldIntegerAccess)) {
 					$this->oFieldInteger = new vscFieldIntegerAccess();
-					$this->oFieldInteger->setConnection($this->getConnection());;
+					$this->oFieldInteger->setConnection($oConnection);
+					$this->oFieldInteger->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
 				return $this->oFieldInteger;
 				break;
@@ -65,7 +69,8 @@ class vscAccessFactory extends vscObject {
 			case ('text'):
 				if (!($this->oFieldText instanceof vscFieldTextAccess)) {
 					$this->oFieldText = new vscFieldTextAccess();
-					$this->oFieldText->setConnection($this->getConnection());
+					$this->oFieldText->setConnection($oConnection);
+					$this->oFieldText->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
 				return $this->oFieldText;
 				break;
@@ -73,7 +78,8 @@ class vscAccessFactory extends vscObject {
 			case ('datetime'):
 				if (!($this->oFieldDate instanceof vscFieldDateTimeAccess)) {
 					$this->oFieldDate = new vscFieldDateTimeAccess();
-					$this->oFieldDate->setConnection($this->getConnection());
+					$this->oFieldDate->setConnection($oConnection);
+					$this->oFieldDate->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
 				return $this->oFieldDate;
 				break;
@@ -81,16 +87,18 @@ class vscAccessFactory extends vscObject {
 			case ('enum'):
 				if (!($this->oFieldEnum instanceof vscFieldEnumAccess)) {
 					$this->oFieldEnum = new vscFieldEnumAccess();
-					$this->oFieldEnum->setConnection($this->getConnection());
+					$this->oFieldEnum->setConnection($oConnection);
+					$this->oFieldEnum->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
 				return $this->oFieldEnum;
 				break;
 			case (vscFieldType::DECIMAL):
 				if (!($this->oFieldEnum instanceof vscFieldDecimalAccess)) {
-					$this->oFieldEnum = new vscFieldDecimalAccess();
-					$this->oFieldEnum->setConnection($this->getConnection());
+					$this->oFieldDecimal = new vscFieldDecimalAccess();
+					$this->oFieldDecimal->setConnection($oConnection);
+					$this->oFieldDecimal->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
-				return $this->oFieldEnum;
+				return $this->oFieldDecimal;
 				break;
 		}
 
@@ -99,32 +107,37 @@ class vscAccessFactory extends vscObject {
 
 	public function getIndex (vscIndexA $oIndex) {
 		$oIndexAccess = null;
+		$oConnection = $this->getConnection();
 		switch ($oIndex->getType()) {
 			case (vscIndexType::PRIMARY):
 				if (!($this->oKeyPrimary instanceof vscKeyPrimaryAccess)) {
 					$this->oKeyPrimary = new vscKeyPrimaryAccess();
-					$this->oKeyPrimary->setConnection($this->getConnection());
+					$this->oKeyPrimary->setConnection($oConnection);
+					$this->oKeyPrimary->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
 				return $this->oKeyPrimary;
 				break;
 			case (vscIndexType::FULLTEXT):
 				if (!($this->oKeyFullText instanceof vscKeyFullTextAccess)) {
 					$this->oKeyFullText = new vscKeyFullTextAccess();
-					$this->oKeyFullText->setConnection($this->getConnection());
+					$this->oKeyFullText->setConnection($oConnection);
+					$this->oKeyFullText->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
 				return $this->oKeyFullText;
 				break;
 			case (vscIndexType::INDEX):
 				if (!($this->oKeyIndex instanceof vscKeyIndexAccess)) {
 					$this->oKeyIndex = new vscKeyIndexAccess();
-					$this->oKeyIndex->setConnection($this->getConnection());
+					$this->oKeyIndex->setConnection($oConnection);
+					$this->oKeyIndex->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
 				return $this->oKeyIndex;
 				break;
 			case (vscIndexType::UNIQUE):
 				if (!($this->oKeyUnique instanceof vscKeyUniqueAccess)) {
 					$this->oKeyUnique = new vscKeyUniqueAccess();
-					$this->oKeyUnique->setConnection($this->getConnection());
+					$this->oKeyUnique->setConnection($oConnection);
+					$this->oKeyUnique->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
 				return $this->oKeyUnique;
 				break;
@@ -132,20 +145,25 @@ class vscAccessFactory extends vscObject {
 	}
 
 	public function getClause () {
+		$oConnection = $this->getConnection();
 		if (!($this->oClause instanceof vscSqlClauseAccess)) {
+			$oConnection = $this->getConnection();
 			$this->oClause = new vscSqlClauseAccess();
-			$this->oClause->setConnection ($this->getConnection());
+			$this->oClause->setConnection ($oConnection);
+			$this->oClause->setGrammarHelper ($this->getGrammarHelper($oConnection));
 		}
 
 		return $this->oClause;
 	}
 
 	public function getJoin (vscJoinA $oJoin) {
+		$oConnection = $this->getConnection();
 		switch ($oJoin->getType()) {
 			case (vscJoinType::INNER):
 				if (!($this->oJoinInner instanceof vscJoinInnerAccess)) {
 					$this->oJoinInner = new vscJoinInnerAccess();
-					$this->oJoinInner->setConnection($this->getConnection());
+					$this->oJoinInner->setConnection($oConnection);
+					$this->oJoinInner->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
 				return $this->oJoinInner;
 				break;
@@ -154,7 +172,8 @@ class vscAccessFactory extends vscObject {
 			case (vscJoinType::RIGHT):
 				if (!($this->oJoinOuter instanceof vscJoinOuterAccess)) {
 					$this->oJoinOuter = new vscJoinOuterAccess();
-					$this->oJoinOuter->setConnection($this->getConnection());
+					$this->oJoinOuter->setConnection($oConnection);
+					$this->oJoinOuter->setGrammarHelper($this->getGrammarHelper($oConnection));
 				}
 				return $this->oJoinOuter;
 				break;

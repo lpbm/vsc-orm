@@ -5,15 +5,6 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.05.29
  */
-abstract class vscSqlIndexAccessA extends vscObject {
-	private $oConnection;
-
-	public function setConnection (vscConnectionA $oConnection) {
-		$this->oConnection = $oConnection;
-	}
-
-	public function getConnection () {
-		return $this->oConnection;
-	}
+abstract class vscSqlIndexAccessA extends vscAccessEntityA {
 	abstract public function getType(vscIndexA $oIndex);
 }

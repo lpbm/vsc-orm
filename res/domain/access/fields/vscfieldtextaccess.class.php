@@ -5,7 +5,7 @@
  * @author Marius Orcsik <marius@habarnam.ro>
  * @date 09.05.29
  */
-import (VSC_LIB_PATH . 'domain/access/fields');
+import ('domain/access/fields');
 
 class vscFieldTextAccess extends vscSqlFieldAccessA {
 	public function getType (vscFieldA $oField) {
@@ -25,7 +25,7 @@ class vscFieldTextAccess extends vscSqlFieldAccessA {
 		return	$this->getType($oField) .
 				($this->getType($oField) != 'TEXT' ? ($oField->getMaxLength() ? '(' . $oField->getMaxLength() . ')' : '') : '' ).
 				($this->getConnection()->getType() != vscConnectionType::postgresql ? ($oField->getEncoding() ? ' CHARACTER SET ' . $oField->getEncoding() : '') : '') .
-				($oField->getDefaultValue() !== null || (!$oField->getIsNullable()) ? $this->getConnection()->_NULL($oField->getIsNullable()) : '').
-				($oField->hasDefaultValue() ? ' DEFAULT ' . ($oField->getDefaultValue() === null ? $this->getConnection()->_NULL(true) : $oField->getDefaultValue()) : '');
+				($oField->getDefaultValue() !== null || (!$oField->getIsNullable()) ? $this->getGrammarHelper()->_NULL($oField->getIsNullable()) : '').
+				($oField->hasDefaultValue() ? ' DEFAULT ' . ($oField->getDefaultValue() === null ? $this->getGrammarHelper()->_NULL(true) : $oField->getDefaultValue()) : '');
 	}
 }

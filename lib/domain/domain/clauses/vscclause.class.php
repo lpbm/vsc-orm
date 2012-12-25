@@ -39,7 +39,11 @@ class vscClause extends vscObject {
 			return;
 		}
 
-		if (($mSubject instanceof vscFieldA) || ($mSubject instanceof vscClause )) {
+		if (vscFieldA::isValid($mSubject) && is_null($mPredicative) && $sPredicate == '=') {
+			$sPredicate = 'IS';
+		}
+
+		if (vscFieldA::isValid($mSubject) || vscClause::isValid($mSubject)) {
 			$this->mSubject 	= $mSubject;
 			$this->mPredicative	= $mPredicative;
 			if ($this->validPredicate ($sPredicate)) {
