@@ -20,6 +20,9 @@ class mySql extends vscConnectionA {
 				$link;
 
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null ){
+		if (!extension_loaded('mysql')) {
+			throw new vscExceptionConnection ('MySQL extension is not loaded.');
+		}
 		if (empty ($dbHost)) {
 			trigger_error('Database connection data missing!', E_USER_ERROR);
 		}

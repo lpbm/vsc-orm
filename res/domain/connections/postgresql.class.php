@@ -24,7 +24,7 @@ abstract class postgreSql extends vscConnectionA {
 
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null , $dbName = null ){
 		if (!extension_loaded('pgsql')) {
-			throw new vscExceptionConnection ('Postgresql extension is not loaded.');
+			throw new vscExceptionConnection ('PostgreSQL extension is not loaded.');
 		}
 		if ( empty ($dbHost) ) {
 			if ( is_null ($this->getDatabaseHost()) ) {
@@ -42,7 +42,7 @@ abstract class postgreSql extends vscConnectionA {
 			}
 		}
 
-		if( empty($dbPass) ) {
+		if ( empty($dbPass) ) {
 			if ( is_null ($this->getDatabasePassword()) ) {
 				throw new vscExceptionConnection ('Database connection data missing: [DB_PASS]');
 			} else {
@@ -50,7 +50,7 @@ abstract class postgreSql extends vscConnectionA {
 			}
 		}
 
-		if( empty($dbName) ) {
+		if ( empty($dbName) ) {
 			if (is_null ($this->getDatabaseName()) ) {
 				throw new vscExceptionConnection ('Database connection data missing: [DB_NAME]');
 			} else {

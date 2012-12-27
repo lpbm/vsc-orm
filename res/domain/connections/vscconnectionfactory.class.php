@@ -28,8 +28,10 @@ class vscConnectionFactory {
 			case vscConnectionType::mysql:
 				if (extension_loaded('mysqli')) {
 					self::$instance =  new mySqlIm ($dbHost, $dbUser, $dbPass, $dbName);
-				} else {
+				} elseif (extension_loaded('mysql')) {
 					self::$instance =  new mySql ($dbHost, $dbUser, $dbPass, $dbName);
+				} else {
+					self::$instance = new nullSql (); // Sql server not implemented
 				}
 				break;
 			case vscConnectionType::postgresql:

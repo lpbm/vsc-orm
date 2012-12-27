@@ -49,7 +49,7 @@ class mySqlIm extends vscConnectionA {
 /**/
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null, $dbName = null ){
 		if (!extension_loaded('mysqli')) {
-			throw new vscExceptionConnection ('Database engine missing: mysqlim');
+			throw new vscExceptionConnection ('MySQL improved extension is not loaded.');
 		}
 		if ( empty ($dbHost) ) {
 			if ( is_null ($this->getDatabaseHost()) ) {
