@@ -248,7 +248,7 @@ abstract class vscDomainObjectA extends vscModelA implements vscDomainObjectI {
 		}
 		$iStatus = 1;
 		foreach ($aIncArray as $sFieldName => $mValue) {
-			if (($sJustFieldName =  stristr($sFieldName, '.'))) {
+			if (($sJustFieldName =  stristr($sFieldName, ':'))) {
 				// removing the alias of the table from the array's index
 				$sFieldName = substr($sJustFieldName, 1);
 			}
