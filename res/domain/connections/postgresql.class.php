@@ -242,14 +242,14 @@ abstract class postgreSql extends vscConnectionA {
 
 
 	public function startTransaction ($bAutoCommit = false) {
-		throw new vscExceptionUnimplemented('Transaction support for postgres is not currenty implemented');
+		return pg_query($this->link, 'BEGIN;');
 	}
 
 	public function rollBackTransaction () {
-		throw new vscExceptionUnimplemented('Transaction support for postgres is not currenty implemented');
+		return pg_query($this->link, 'ROLLBACK;');
 	}
 
 	public function commitTransaction () {
-		throw new vscExceptionUnimplemented('Transaction support for postgres is not currenty implemented');
+		return pg_query($this->link, 'COMMIT;');
 	}
 }
