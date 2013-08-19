@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pseudo null to be implemented (ehm, inherited) by the rest
  * of the DB classes.
@@ -31,4 +32,8 @@ class nullSql extends vscConnectionA {
 	public function getScalar () {}
 
 	public function startTransaction ($bAutoCommit = false) {}
+	
+	public function rollBackTransaction () {}
+	
+	public function commitTransaction () {}
 }
