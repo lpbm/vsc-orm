@@ -1,0 +1,13 @@
+<phpunit
+    bootstrap="./orm_phpunittest_environment.php"
+    colors="true"
+    stopOnError="true"
+    stopOnFailure="false"
+    strict="true"
+    processIsolation="true">
+    <testsuites>
+        <testsuite name="my test suite">
+            <directory suffix=".ptest.php">./</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
