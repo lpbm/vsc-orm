@@ -7,7 +7,7 @@
  * @author Marius Orcsik <marius@habarnam.ro>
  * @date 09.04.27
  */
-class mdb2 extends vscConnectionA {
+class mdb2 extends ConnectionA {
 	public 		$conn,
 				$link;
 	private 	$name,
@@ -33,21 +33,21 @@ class mdb2 extends vscConnectionA {
 		elseif (defined('DB_HOST'))
 			$this->host	= DB_HOST;
 		else
-			throw new vscConnectionException ('Database connection data missing: [DB_HOST]');
+			throw new ConnectionException ('Database connection data missing: [DB_HOST]');
 
 		if (!empty ($dbUser))
 			$this->user	= $dbUser;
 		elseif (defined('DB_USER'))
 			$this->user	= DB_USER;
 		else
-			throw new vscConnectionException ('Database connection data missing: [DB_USERNAME]');
+			throw new ConnectionException ('Database connection data missing: [DB_USERNAME]');
 
 		if(!empty($dbPass))
 			$this->pass	= $dbPass;
 		elseif (defined('DB_PASS'))
 			$this->pass	= DB_PASS;
 		else
-			throw new vscConnectionException ('Database connection data missing [DB_PASSWORD]');
+			throw new ConnectionException ('Database connection data missing [DB_PASSWORD]');
 
 		if (!empty($this->host) && !empty($this->user) && !empty($this->pass)) {
 			$this->connect ();
@@ -71,7 +71,7 @@ class mdb2 extends vscConnectionA {
 		$errNo = mysqli_connect_errno();
 		if (!empty($errNo)) {
 			$this->error = $errNo.' '.mysqli_connect_error();
-			throw new vscConnectionException($this->error);
+			throw new ConnectionException($this->error);
 //			trigger_error ($this->link->error, E_USER_ERROR);
 			return false;
 		}

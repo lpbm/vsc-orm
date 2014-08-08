@@ -9,7 +9,7 @@ if ( !defined ('VSC_PATH') ) {
 	$sMessage = 'libVSC is required in order to load this ORM framework';
 	throw new ErrorException ($sMessage, E_USER_ERROR);
 } else {
-	include_once (VSC_PATH . 'vsc.inc.php');
+	include_once ( _PATH . 'vsc.inc.php');
 
 	import (ORM_LIB_PATH);
 	import (ORM_RES_PATH);

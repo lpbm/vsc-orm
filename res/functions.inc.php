@@ -7,7 +7,7 @@
  * @param $message
  * @param $filename
  * @param $lineno
- * @throws vscExceptionError
+ * @throws \vsc\ExceptionError
  * @return void
  */
 function exceptions_error_handler ($iSeverity, $sMessage, $sFilename, $iLineNo) {
@@ -17,16 +17,8 @@ function exceptions_error_handler ($iSeverity, $sMessage, $sFilename, $iLineNo) 
 
 	if (error_reporting() & $iSeverity) {
 		// the __autoload seems not to be working here
-		include_once(realpath(VSC_LIB_PATH . 'exceptions/vscexceptionerror.class.php'));
-		throw new vscExceptionError ($sMessage, 0, $iSeverity, $sFilename, $iLineNo);
+		throw new \vsc\ExceptionError ($sMessage, 0, $iSeverity, $sFilename, $iLineNo);
 	}
-}
-
-/**
- * @return bool
- */
-function isCli () {
-	return (php_sapi_name() == 'cli');
 }
 
 function d () {
@@ -60,42 +52,6 @@ function d () {
 	exit ();
 }
 
-
-/**
- * the __autoload automagic function for class instantiation,
- * @param string $className
- */
-function __autoload ($className) {
-	if (class_exists ($className, false)) {
-		return true;
-	}
-	$fileIncluded = false;
-
-	$classNameLow = strtolower($className);
-
-	$sFilePath	= $classNameLow . '.class.php';
-	if (stristr ($classNameLow, 'exception')) {
-		$sExceptionsFilePath = 'exceptions' . DIRECTORY_SEPARATOR . $sFilePath;
-		$fileIncluded = include ($sExceptionsFilePath);
-	}
-	if (!$fileIncluded) {
-		$fileIncluded = include ($sFilePath);
-	}
-    if ( !$fileIncluded ||
-        (!in_array($className,get_declared_classes()) &&
-         !in_array($className,get_declared_interfaces())
-        )
-    ) {
-		include_once (VSC_LIB_PATH . 'exceptions'.DIRECTORY_SEPARATOR.'vscexception.class.php');
-		include_once (VSC_LIB_PATH . 'exceptions'.DIRECTORY_SEPARATOR.'vscexceptionpath.class.php');
-		include_once (VSC_LIB_PATH . 'exceptions'.DIRECTORY_SEPARATOR.'vscexceptionautoload.class.php');
-
-		$sExport = var_export(getPaths(),true);
-		throw new vscExceptionAutoload('Could not load class ['.$className.'] in path: <pre style="font-weight:normal">' . $sExport . '</pre>');
-	}
-    return true;
-}
-
 function getPaths () {
 	return explode (PATH_SEPARATOR, get_include_path());
 }
@@ -110,68 +66,6 @@ function cleanBuffers ($iLevel = null) {
 	}
 	return $sErrors;
 }
-
-function addPath ($pkgPath, $sIncludePath = null) {
-	// removing the trailing / if it exists
-	if (substr($pkgPath,-1) == DIRECTORY_SEPARATOR) {
-		$pkgPath = substr ($pkgPath,0, -strlen (DIRECTORY_SEPARATOR));
-	}
-
-	if (is_null($sIncludePath)) {
-		$sIncludePath 	= get_include_path();
-	}
-
-	// checking to see if the path exists already in the included path
-	if (strpos ($sIncludePath, $pkgPath . PATH_SEPARATOR) === false) {
-		set_include_path (
-			$pkgPath . PATH_SEPARATOR .
-			$sIncludePath
-		);
-	}
-	return true;
-}
-
-/**
- * Adds the package name to the include path
- * Also we are checking if an existing import exists, which would define some application specific import rules
- * @param string $sIncPath
- * @return bool
- * @throws vscExceptionPackageImport
- */
-function import ($sIncPath) {
-	// fixing the paths to be fully compliant with the OS - indifferently how they are set
-	$sIncPath	= str_replace(array('/','\\'), array(DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR),$sIncPath);
-	$bStatus 	= false;
-	$sPkgLower 	= strtolower ($sIncPath);
-	$sIncludePath 	= get_include_path();
-
-	if (is_dir ($sIncPath)) {
-		return addPath ($sIncPath, $sIncludePath);
-	}
-
-	$aPaths 		= explode(PATH_SEPARATOR, $sIncludePath);
-	krsort ($aPaths);
-
-	// this definitely needs improvement
-	foreach ($aPaths as $sPath) {
-		$pkgPath 	= $sPath . DIRECTORY_SEPARATOR . $sPkgLower;
-		if (is_dir($pkgPath)) {
-			$bStatus |= addPath ($pkgPath);
-		}
-	}
-
-	if (!$bStatus) {
-		// to avoid an infinite loop, we include these execeptions manually
-		include_once(VSC_LIB_PATH . 'exceptions'.DIRECTORY_SEPARATOR.'vscexception.class.php');
-		include_once(VSC_LIB_PATH . 'exceptions'.DIRECTORY_SEPARATOR.'vscexceptionpath.class.php');
-		include_once(VSC_LIB_PATH . 'exceptions'.DIRECTORY_SEPARATOR.'vscexceptionpackageimport.class.php');
-
-		throw new vscExceptionPackageImport ('Bad package [' . $sIncPath . ']');
-	} else {
-		return true;
-	}
-}
-
 
 function getDirFiles ( $dir, $showHidden = false){
 	$files =  array();
