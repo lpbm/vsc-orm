@@ -1,5 +1,4 @@
 <?php
-
 /**
  * class to abstract a where clause in a SQL query
  * TODO: add possibility of complex wheres: (t1 condition1 OR|AND|XOR t2.condition2)
@@ -8,7 +7,9 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.06.01
  */
+namespace orm\domain\domain\clauses;
 
+use orm\domain\domain\fields\FieldA;
 use vsc\infrastructure\Object;
 
 class Clause extends Object {

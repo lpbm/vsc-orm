@@ -5,7 +5,10 @@
  */
 namespace orm\domain\access\connections;
 
+use orm\domain\connections\ConnectionA;
+use orm\domain\connections\ConnectionType;
 use vsc\infrastructure\String;
+use vsc\ExceptionUnimplemented;
 
 class nullSql extends ConnectionA {
 	public 		$conn,
@@ -16,14 +19,15 @@ class nullSql extends ConnectionA {
 	 * an unsupported DB_TYPE connection (usually because of a config error)
 	 *
 	 * TODO: this can be done more elegantly using an exception in the
-	 * 		 ConnectionFactory class
+	 *         @var ConnectionFactory class
 	 *
 	 * @param string $dbHost
 	 * @param string $dbUser
 	 * @param string $dbPass
+	 * @throws \vsc\ExceptionUnimplemented
 	 */
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null ) {
-		throw new \vsc\ExceptionUnimplemented('This site has all database functionality disabled.'.String::nl().' Please check for configuration errors.');
+		throw new ExceptionUnimplemented('This site has all database functionality disabled.'.String::nl().' Please check for configuration errors.');
 	}
 
 	public function getType () {

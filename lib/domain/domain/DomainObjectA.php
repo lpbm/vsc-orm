@@ -10,7 +10,10 @@
  */
 namespace orm\domain\domain;
 
-use vsc\domain\models\ModelA;;
+use orm\domain\domain\indexes\IndexA;
+use orm\domain\domain\indexes\KeyPrimary;
+use vsc\domain\models\ModelA;
+use orm\domain\domain\fields\FieldA;
 
 abstract class DomainObjectA extends ModelA implements DomainObjectI {
 	protected 	$sTableName;
@@ -108,7 +111,7 @@ abstract class DomainObjectA extends ModelA implements DomainObjectI {
 	 * @return void
 	 */
 	public function setPrimaryKey () {
-		$this->oPk = new KeyPrimary (func_get_args());
+		$this->oPk = new KeyPrimary(func_get_args());
 	}
 
 	public function getPrimaryKey () {
@@ -116,7 +119,7 @@ abstract class DomainObjectA extends ModelA implements DomainObjectI {
 	}
 
 	public function hasPrimaryKey () {
-		return ($this->oPk instanceof KeyPrimary);
+		return KeyPrimary::isValid($this->oPk);
 	}
 
 	/**
@@ -136,10 +139,10 @@ abstract class DomainObjectA extends ModelA implements DomainObjectI {
 	 */
 	public function addField ( FieldA $oIncField) {
 		$aFields = $this->getFields();
-		if (!key_exists($sName, $aFields)) {
+		if (!array_key_exists($oIncField->getName(), $aFields)) {
 			$oIncField->setParent($this);
-			$oRef = new ReflectionProperty($this, $oIncField->getName());
-			$oRef->setValue($object, $oIncField);
+			$oRef = new \ReflectionProperty($this, $oIncField->getName());
+			$oRef->setValue($oIncField, $oIncField->getValue());
 
 			$oRef->setAccessible(false);
 		}
@@ -147,7 +150,7 @@ abstract class DomainObjectA extends ModelA implements DomainObjectI {
 
 	protected function getField ($sName) {
 		$aFields = $this->getFields();
-		if (key_exists($sName, $aFields)) return $aFields[$sName];
+		if (array_key_exists($sName, $aFields)) return $aFields[$sName];
 
 		return false;
 	}
@@ -156,20 +159,20 @@ abstract class DomainObjectA extends ModelA implements DomainObjectI {
 	 * @return FieldA[]
 	 */
 	public function getFields () {
-		$oRef = new ReflectionObject($this);
-		$aProperties = $oRef->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PRIVATE);
+		$oRef = new \ReflectionObject($this);
+		$aProperties = $oRef->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PRIVATE);
 		$aRet = array();
 
-		/* @var $oProperty ReflectionProperty */
+		/* @var $oProperty \ReflectionProperty */
 		foreach ($aProperties as $oProperty) {
 			if (!$oProperty->isPrivate()) {
 				$oValue = $oProperty->getValue($this);
 			} else {
 				$oProperty->setAccessible(true);
 				$oValue = $oProperty->getValue($this);
-				//				$oProperty->setAccessible(false);
-
-				//				$oValue = $this->__get($oProperty->getName());
+//				$oProperty->setAccessible(false);
+//
+//				$oValue = $this->__get($oProperty->getName());
 			}
 			if ( FieldA::isValid($oValue)) {
 				$aRet[$oProperty->getName()] = $oValue;

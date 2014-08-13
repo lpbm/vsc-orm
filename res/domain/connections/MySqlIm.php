@@ -17,16 +17,20 @@
  */
 namespace orm\domain\access\connections;
 
+use orm\domain\connections\ConnectionA;
+use orm\domain\connections\ConnectionType;
+use orm\domain\connections\ExceptionConnection;
 use vsc\ExceptionUnimplemented;
+use vsc\infrastructure\String;
 
-class mySqlIm extends ConnectionA {
+class MySqlIm extends ConnectionA {
 	/**
-	 * @var mysqli_result
+	 * @var \mysqli_result
 	 */
 	public 		$conn;
 
 	/**
-	 * @var mysqli
+	 * @var \mysqli
 	 */
 	public		$link;
 	private 	$iLastInsertId;
@@ -34,7 +38,7 @@ class mySqlIm extends ConnectionA {
 	private		$defaultSocketPath =  '/var/run/mysqld/mysqld.sock';
 
 	static public function isValidLink ($oLink) {
-		return ($oLink instanceof mysqli);
+		return ($oLink instanceof \mysqli);
 	}
 
 	public function isConnected () {
@@ -89,7 +93,7 @@ class mySqlIm extends ConnectionA {
 		}
 		try {
 			$this->connect ($dbHost, $dbUser, $dbPass, $dbName);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			_e($e);
 		}
 	}
@@ -103,16 +107,21 @@ class mySqlIm extends ConnectionA {
 	}
 
 	public function validResult ($oResource) {
-		return ($oResource instanceof mysqli_result);
+		return ($oResource instanceof \mysqli_result);
 	}
 
 	/**
 	 * wrapper for mysql_connect
 	 *
+	 * @param string $dbHost
+	 * @param string $dbUser
+	 * @param string $dbPass
+	 * @param string $dbName
+	 * @throws \orm\domain\connections\ExceptionConnection
 	 * @return bool
 	 */
 	protected function connect ($dbHost = null, $dbUser = null, $dbPass = null, $dbName = null ) {
-		$this->link	= new mysqli ($dbHost, $dbUser, $dbPass, $dbName, null, $this->defaultSocketPath);
+		$this->link	= new \mysqli($dbHost, $dbUser, $dbPass, $dbName, null, $this->defaultSocketPath);
 		if (!empty($this->link->connect_errno)) {
 			$this->error = $this->link->connect_errno . ' ' . $this->link->connect_error;
 			throw new ExceptionConnection('mysqli : ' . $this->error);
@@ -137,6 +146,7 @@ class mySqlIm extends ConnectionA {
 	 * wrapper for mysql_select_db
 	 *
 	 * @param string $incData
+	 * @throws \orm\domain\connections\ExceptionConnection
 	 * @return bool
 	 */
 	public function selectDatabase ($incData){
@@ -174,10 +184,11 @@ class mySqlIm extends ConnectionA {
 	 * wrapper for mysql_query
 	 *
 	 * @param string $query
+	 * @throws \orm\domain\connections\ExceptionConnection
 	 * @return mixed
 	 */
 	public function query ($query){
-		if (!($this->link instanceof mysqli)) {
+		if (!($this->link instanceof \mysqli)) {
 			return false;
 		}
 		if (!empty($query)) {
@@ -217,14 +228,14 @@ class mySqlIm extends ConnectionA {
 	 * @return array
 	 */
 	public function getRow (){
-		if ($this->conn instanceof mysqli_result)
+		if ($this->conn instanceof \mysqli_result)
 			return $this->conn->fetch_row ();
 	}
 
 	// FIXME: for some reason the getAssoc and getArray work differently
 	public function getAssoc () {
 		if (
-			$this->conn instanceof mysqli_result
+			$this->conn instanceof \mysqli_result
 		) {
 			return $this->conn->fetch_assoc();
 		}
@@ -238,7 +249,7 @@ class mySqlIm extends ConnectionA {
 	public function getObjects () {
 		$retArr = array ();
 		$i = 0;
-		if ($this->conn instanceof mysqli_result && $this->link instanceof mysqli ) {
+		if ($this->conn instanceof \mysqli_result && $this->link instanceof \mysqli ) {
 			while ($i < mysqli_field_count ($this->link)) {
 				$t = $this->conn->fetch_field_direct ($i++);
 				$retArr[] = $t;
@@ -256,7 +267,7 @@ class mySqlIm extends ConnectionA {
 	public function getArray (){
 		$retArr = array();
 // 		d ($this->conn->field_count);
-		if ($this->conn instanceof mysqli_result) {
+		if ($this->conn instanceof \mysqli_result) {
 			while (($r = $this->conn->fetch_assoc ())){
 				$retArr[] = $r;
 			}

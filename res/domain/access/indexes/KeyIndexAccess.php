@@ -7,6 +7,8 @@
  */
 namespace orm\domain\access\indexes;
 
+use orm\domain\domain\indexes\IndexA;
+
 class KeyIndexAccess extends SqlIndexAccessA {
 	public function getType( IndexA $oIndex) {}
 	public function getDefinition ( IndexA $oIndex) {

@@ -7,6 +7,8 @@
  */
 namespace orm\domain\access\fields;
 
+use orm\domain\domain\fields\FieldA;
+
 class FieldDecimalAccess extends SqlFieldAccessA {
 	public function getType ( FieldA $oField) {
 		return 'DECIMAL';

@@ -7,6 +7,9 @@
  */
 namespace orm\domain\access\fields;
 
+use orm\domain\domain\fields\FieldA;
+use orm\domain\connections\ConnectionType;
+
 class FieldIntegerAccess extends SqlFieldAccessA {
 	public function getType ( FieldA $oField) {
 		return 'INTEGER';

@@ -7,9 +7,13 @@
  */
 namespace orm\domain\models;
 
+use orm\domain\connections\ConnectionA;
+use orm\domain\domain\DomainObjectA;
+use orm\domain\domain\DomainObjectI;
+use orm\domain\domain\fields\FieldA;
+use orm\domain\domain\indexes\IndexA;
 use \vsc\domain\models\ModelA;
 use \vsc\infrastructure\Null;
-use \vsc\ExceptionUnimplemented;
 
 class SimpleSqlModelA extends ModelA implements DomainObjectI {
 	final public function __construct () {
@@ -20,7 +24,7 @@ class SimpleSqlModelA extends ModelA implements DomainObjectI {
 	public function __get ($sVarName) {
 		try {
 			return $this->getDomainObject()->__get($sVarName);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return parent::__get($sVarName);
 		}
 	}
@@ -28,7 +32,7 @@ class SimpleSqlModelA extends ModelA implements DomainObjectI {
 	public function __set ($sVarName, $sValue) {
 		try {
 			return $this->getDomainObject()->$sVarName = $sValue;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return parent::__set($sVarName, $sValue);
 		}
 	}

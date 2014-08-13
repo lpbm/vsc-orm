@@ -1,7 +1,15 @@
 <?php
 namespace orm\domain\access\drivers;
 
-class SQLGenericDriver extends sqlDriverA {
+class PostgreSqlDriver extends SqlGenericDriver {
+	public $STRING_OPEN_QUOTE = '\'',
+		$STRING_CLOSE_QUOTE = '\'',
+		$FIELD_OPEN_QUOTE = '"',
+		$FIELD_CLOSE_QUOTE = '"',
+		$TRUE = 'true',
+		$FALSE = 'false';
+
+
 	/**
 	 *
 	 * @param array $incObj = array (array('field1','alias1),array('field2','alias2),...)
@@ -13,26 +21,26 @@ class SQLGenericDriver extends sqlDriverA {
 		}
 
 		$retStr = 'SELECT ';
-		return $retStr . ' ' . $incObj . ' ';
+		return $retStr.' '.$incObj.' ';
 	}
 
 	public function _DELETE($sIncName) {
 		return ' DELETE FROM ' . $sIncName . ' ';
 	}
 
-	public function _CREATE ($sName){
-		return ' CREATE TABLE ' . $sName . ' ';
+	public function _CREATE ($sIncName){
+		return ' CREATE TABLE ' . $sIncName;
 	}
 
 	public function _SET(){
-		return ' SET ';
+		return ' ';
 	}
 
 	public function _INSERT ($incData){
 		if (empty ($incData)) {
 			return '';
 		}
-		return ' INSERT INTO '.$incData . ' ';
+		return ' INSERT INTO ' . $incData;
 	}
 
 	public function _VALUES ($incData) {
@@ -54,7 +62,7 @@ class SQLGenericDriver extends sqlDriverA {
 			return '';
 		}
 		if (is_array($incData)) {
-			$incData = implode( "\n".', ',$incData);
+			$incData = implode('", "',$incData);
 		}
 
 		return ' FROM '.$incData.' ';
@@ -74,14 +82,14 @@ class SQLGenericDriver extends sqlDriverA {
 		return ' OR ';
 	}
 	public function _JOIN ($type) {
-		return $type . ' JOIN ';
+
 	}
 
 	/**
 	 * @return string
 	 */
 	public function _AS ($str){
-		return ' AS '.$str;
+		return ' AS ' . $str;
 	}
 
 	public function _LIMIT ($start, $end = 0){
@@ -107,9 +115,15 @@ class SQLGenericDriver extends sqlDriverA {
 		}
 
 		$retStr = ' GROUP BY ';
-		return $retStr.' '.$incObj;
+		return $retStr . ' ' . $incObj;
 	}
 
+	/**
+	 * method that abstracts the ORDER BY clauses
+	 *
+	 * @param 	string $orderBys
+	 * @return	string
+	 */
 	public function _ORDER ($orderBys = null){
 		if (empty($orderBys)) {
 			return '';
@@ -120,11 +134,10 @@ class SQLGenericDriver extends sqlDriverA {
 	}
 
 	public function _WHERE ($clause) {
-		return ' WHERE '.$clause;
+		return ' WHERE ' . $clause;
 	}
 
 	public function _NULL ($bIsNull = true) {
-		// ?
 		return (!$bIsNull ? ' NOT ' : ' ') . 'NULL';
 	}
 }

@@ -7,6 +7,15 @@
  * @version 0.0.1
  */
 namespace orm\domain\access\tables;
+use orm\domain\access\connections\ConnectionFactory;
+use orm\domain\access\drivers\MySqlDriver;
+use orm\domain\access\drivers\PostgreSqlDriver;
+use orm\domain\access\drivers\sqlDriverA;
+use orm\domain\access\drivers\SqlGenericDriver;
+use orm\domain\connections\ConnectionA;
+use orm\domain\connections\ConnectionType;
+use orm\domain\domain\DomainObjectA;
+use orm\domain\ExceptionInvalidType;
 use vsc\infrastructure\Object;
 
 abstract class SqlAccessA extends Object implements SqlAccessI {
@@ -36,6 +45,7 @@ abstract class SqlAccessA extends Object implements SqlAccessI {
 	}
 
 	/**
+	 * @throws ExceptionInvalidType
 	 * @return ConnectionA
 	 */
 	public function getConnection () {
@@ -50,7 +60,7 @@ abstract class SqlAccessA extends Object implements SqlAccessI {
 			$this->getConnection()->selectDatabase($this->getDatabaseName());
 
 			if (!self::isValidConnection($this->oConnection)) {
-				throw new InvalidTypeException ('Could not establish a valid DB connection - current resource type [' . get_class ($this->oConnection) . ']');
+				throw new ExceptionInvalidType ('Could not establish a valid DB connection - current resource type [' . get_class ($this->oConnection) . ']');
 			}
 		}
 		return $this->oConnection;
@@ -61,14 +71,14 @@ abstract class SqlAccessA extends Object implements SqlAccessI {
 			$iDatabaseType = $this->getDatabaseType();
 			switch ($iDatabaseType) {
 				case ConnectionType::postgresql:
-					$this->oDriver = new postgreSQLDriver();
+					$this->oDriver = new PostgreSqlDriver();
 					break;
 				case ConnectionType::mysql:
-					$this->oDriver = new mySQLDriver();
+					$this->oDriver = new MySqlDriver();
 					break;
 				case ConnectionType::sqlite:
 				default:
-					$this->oDriver = new SQLGenericDriver();
+					$this->oDriver = new SqlGenericDriver();
 					break;
 			}
 		}
@@ -93,7 +103,7 @@ abstract class SqlAccessA extends Object implements SqlAccessI {
 
 	/**
 	 * (non-PHPdoc)
-	 * @see lib/domain/access/SqlAccessI#update()
+	 * @see SqlAccessI::update()
 	 */
 	public function update ( DomainObjectA $oDomainObject) {
 		return $this->getConnection()->query($this->outputUpdateSql($oDomainObject));
@@ -101,7 +111,7 @@ abstract class SqlAccessA extends Object implements SqlAccessI {
 
 	/**
 	 * (non-PHPdoc)
-	 * @see lib/domain/access/SqlAccessI#delete()
+	 * @see SqlAccessI::delete()
 	 */
 	public function delete ( DomainObjectA $oDomainObject) {
 		return $this->getConnection()->query($this->outputDeleteSql($oDomainObject));

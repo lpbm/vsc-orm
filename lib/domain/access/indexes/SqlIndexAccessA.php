@@ -7,6 +7,9 @@
  */
 namespace orm\domain\access\indexes;
 
+use orm\domain\access\AccessEntityA;
+use orm\domain\domain\indexes\IndexA;
+
 abstract class SqlIndexAccessA extends AccessEntityA {
 	abstract public function getType( IndexA $oIndex);
 }

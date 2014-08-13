@@ -9,6 +9,9 @@
  */
 namespace orm\domain\access\connections;
 
+use orm\domain\connections\ConnectionA;
+use orm\domain\connections\ExceptionConnection;
+
 class mdb2 extends ConnectionA {
 	public 		$conn,
 				$link;
@@ -35,21 +38,21 @@ class mdb2 extends ConnectionA {
 		elseif (defined('DB_HOST'))
 			$this->host	= DB_HOST;
 		else
-			throw new ConnectionException ('Database connection data missing: [DB_HOST]');
+			throw new ExceptionConnection ('Database connection data missing: [DB_HOST]');
 
 		if (!empty ($dbUser))
 			$this->user	= $dbUser;
 		elseif (defined('DB_USER'))
 			$this->user	= DB_USER;
 		else
-			throw new ConnectionException ('Database connection data missing: [DB_USERNAME]');
+			throw new ExceptionConnection ('Database connection data missing: [DB_USERNAME]');
 
 		if(!empty($dbPass))
 			$this->pass	= $dbPass;
 		elseif (defined('DB_PASS'))
 			$this->pass	= DB_PASS;
 		else
-			throw new ConnectionException ('Database connection data missing [DB_PASSWORD]');
+			throw new ExceptionConnection ('Database connection data missing [DB_PASSWORD]');
 
 		if (!empty($this->host) && !empty($this->user) && !empty($this->pass)) {
 			$this->connect ();
@@ -66,14 +69,15 @@ class mdb2 extends ConnectionA {
 	/**
 	 * wrapper for mysql_connect
 	 *
+	 * @throws \orm\domain\connections\ExceptionConnection
 	 * @return bool
 	 */
 	private function connect (){
-		$this->link	= @new mysqli ($this->host, $this->user, $this->pass);
+		$this->link	= @new \mysqli($this->host, $this->user, $this->pass);
 		$errNo = mysqli_connect_errno();
 		if (!empty($errNo)) {
 			$this->error = $errNo.' '.mysqli_connect_error();
-			throw new ConnectionException($this->error);
+			throw new ExceptionConnection($this->error);
 //			trigger_error ($this->link->error, E_USER_ERROR);
 			return false;
 		}
@@ -86,7 +90,7 @@ class mdb2 extends ConnectionA {
 	 * @return bool
 	 */
 	public function close (){
-		if ($this->link instanceof mysqli)
+		if ($this->link instanceof \mysqli)
 			$this->link->close ();
 		// dunno how smart it is to nullify an mysqli object
 		$this->link = null;
@@ -101,7 +105,7 @@ class mdb2 extends ConnectionA {
 	 */
 	public function selectDatabase ($incData){
 		$this->name = $incData;
-		if (($this->link instanceof mysqli) && $this->link->select_db($incData)) {
+		if (($this->link instanceof \mysqli) && $this->link->select_db($incData)) {
 			return true;
 		} else {
 //			trigger_error($this->link->error, E_USER_ERROR);
@@ -129,7 +133,7 @@ class mdb2 extends ConnectionA {
 	 * @return mixed
 	 */
 	public function query ($query){
-		if (!($this->link instanceof mysqli)) {
+		if (!($this->link instanceof \mysqli)) {
 			return false;
 		}
 		if (!empty($query)) {
@@ -161,13 +165,13 @@ class mdb2 extends ConnectionA {
 	 * @return array
 	 */
 	public function getRow (){
-		if ($this->conn instanceof mysqli_result)
+		if ($this->conn instanceof \mysqli_result)
 			return $this->conn->fetch_row ();
 	}
 
 	// FIXME: for some reason the getAssoc and getArray work differently
 	public function getAssoc () {
-		if ($this->conn instanceof mysqli_result)
+		if ($this->conn instanceof \mysqli_result)
 			return $this->conn->fetch_assoc ();
 	}
 
@@ -179,7 +183,7 @@ class mdb2 extends ConnectionA {
 	public function getObjects () {
 		$retArr = array ();
 		$i = 0;
-		if ($this->conn instanceof mysqli_result && $this->link instanceof mysqli ) {
+		if ($this->conn instanceof \mysqli_result && $this->link instanceof \mysqli ) {
 			while ($i < mysqli_field_count ($this->link)) {
 				$t = $this->conn->fetch_field_direct ($i++);
 				$retArr[] = $t;
@@ -196,7 +200,7 @@ class mdb2 extends ConnectionA {
 	 */
 	public function getArray (){
 		$retArr = array();
-		if ($this->conn instanceof mysqli_result)
+		if ($this->conn instanceof \mysqli_result)
 			while (($r = $this->conn->fetch_assoc ())){
 				$retArr[] = $r;
 			}
@@ -214,5 +218,17 @@ class mdb2 extends ConnectionA {
 		if (is_array($retVal))
 			$retVal = current($retVal);
 		return $retVal;
+	}
+
+	public function startTransaction ( $bAutoCommit = false ) {
+		// TODO: Implement startTransaction() method.
+	}
+
+	public function rollBackTransaction () {
+		// TODO: Implement rollBackTransaction() method.
+	}
+
+	public function commitTransaction () {
+		// TODO: Implement commitTransaction() method.
 	}
 }

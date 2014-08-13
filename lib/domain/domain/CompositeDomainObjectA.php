@@ -7,6 +7,8 @@
  */
 namespace orm\domain\domain;
 
+use orm\domain\domain\fields\FieldA;
+use orm\domain\ExceptionInvalidType;
 use vsc\infrastructure\Object;
 
 abstract class CompositeDomainObjectA extends Object implements CompositeDomainObjectI {
@@ -19,11 +21,11 @@ abstract class CompositeDomainObjectA extends Object implements CompositeDomainO
 	}
 
 	public function getDomainObjects () {
-		$oRef = new ReflectionObject($this);
-		$aProperties = $oRef->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PRIVATE);
+		$oRef = new \ReflectionObject($this);
+		$aProperties = $oRef->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PRIVATE);
 		$aRet = array();
 
-		/* @var $oProperty ReflectionProperty */
+		/* @var \ReflectionProperty $oProperty */
 		foreach ($aProperties as $oProperty) {
 			if (!$oProperty->isPrivate()) {
 				$oValue = $oProperty->getValue($this);
@@ -104,17 +106,17 @@ abstract class CompositeDomainObjectA extends Object implements CompositeDomainO
 
 	public function addDomainObject ( DomainObjectA $oIncDomainObject) {
 		$aDomainObjects = $this->getDomainObjects();
-		if (!array_key_exists($sName, $aDomainObjects)) {
+		if (!array_key_exists($oIncDomainObject->getTableName(), $aDomainObjects)) {
 			$oIncDomainObject->setParent($this);
 			$oRef = new \ReflectionProperty($this, $oIncDomainObject->getTableName());
-			$oRef->setValue($object, $oIncDomainObject);
+			$oRef->setValue($oIncDomainObject, $oIncDomainObject->getValue());
 
 			$oRef->setAccessible(false);
 		}
 	}
 
 	public function addForeignKey ($oRightField, $oLeftField) {
-		if (!\FieldA::isValid($oRightField) || !FieldA::isValid($oLeftField))
+		if (!FieldA::isValid($oRightField) || !FieldA::isValid($oLeftField))
 			throw new ExceptionInvalidType('Objects [' . get_class($oRightField) . '] and [' .get_class($oLeftField) .' ] do not have the proper types, expected [FieldA],[FieldA]' );
 		$iKey = count ($this->aForeignKeys);
 		if (!$oRightField->getParent()->hasTableAlias())

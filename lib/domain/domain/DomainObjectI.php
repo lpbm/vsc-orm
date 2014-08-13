@@ -7,7 +7,13 @@
  */
 namespace orm\domain\domain;
 
+use orm\domain\domain\fields\FieldA;
+use orm\domain\domain\indexes\IndexA;
+
 interface DomainObjectI {
+	/**
+	 * @return FieldA[]
+	 */
 	public function getFields();
 
 	/**
@@ -16,6 +22,9 @@ interface DomainObjectI {
 	 */
 	public function getFieldNames ($bWithAlias = false);
 
-
+	/**
+	 * @param bool $bWithPrimaryKey
+	 * @return IndexA[]
+	 */
 	public function getIndexes ($bWithPrimaryKey = false);
 }

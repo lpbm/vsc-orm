@@ -17,9 +17,12 @@
  */
 namespace orm\domain\access\connections;
 
+use orm\domain\connections\ConnectionA;
+use orm\domain\connections\ConnectionType;
+use orm\domain\connections\ExceptionConnection;
 use vsc\ExceptionUnimplemented;
 
-class mySql extends ConnectionA {
+class MySql extends ConnectionA {
 	public 		$conn,
 				$link;
 

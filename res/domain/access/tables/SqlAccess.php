@@ -7,6 +7,27 @@
  */
 namespace orm\domain\access\tables;
 
+use orm\domain\access\AccessFactory;
+use orm\domain\domain\clauses\Clause;
+use orm\domain\domain\indexes\IndexType;
+use orm\domain\domain\indexes\KeyUnique;
+use orm\domain\domain\joins\JoinA;
+use orm\domain\domain\joins\Join;
+use orm\domain\domain\joins\JoinOuter;
+use orm\domain\models\CompositeSqlModelA;
+use orm\domain\domain\DomainObjectI;
+use orm\domain\domain\DomainObjectA;
+use orm\domain\domain\fields\FieldA;
+use orm\domain\domain\indexes\IndexA;
+use orm\domain\domain\indexes\KeyPrimary;
+use orm\domain\domain\fields\FieldInteger;
+use orm\domain\ExceptionConstraint;
+use orm\domain\domain\ExceptionDomain;
+use orm\domain\domain\fields\FieldI;
+
+use vsc\domain\access\ExceptionAccess;
+use vsc\ExceptionError;
+
 class SqlAccess extends SqlAccessA {
 	private $aGroupBys	= array();
 	private $aOrderBys	= array();
@@ -81,7 +102,7 @@ class SqlAccess extends SqlAccessA {
 		}
 	}
 
-	public function getQuotedFieldList ( DomainObjectI $oDomainObject, $bWithAlias = false, $bWithTableAlias = false) {
+	public function getQuotedFieldList ( DomainObjectA $oDomainObject, $bWithAlias = false, $bWithTableAlias = false) {
 		$aRet = array ();
 		$o = $this->getDriver();
 
@@ -91,7 +112,7 @@ class SqlAccess extends SqlAccessA {
 				$sField = $o->FIELD_OPEN_QUOTE .  $oDomainObject->getTableAlias() . $o->FIELD_CLOSE_QUOTE . '.';
 			}
 
-			$sField .= $o->FIELD_OPEN_QUOTE . $oField->getName() . $o->FIELD_CLOSE_QUOTE . ($bWithAlias && $oField->getAlias() ? $o->_AS() . $o->FIELD_OPEN_QUOTE . $oField->getAlias() . $o->FIELD_CLOSE_QUOTE : '');
+			$sField .= $o->FIELD_OPEN_QUOTE . $oField->getName() . $o->FIELD_CLOSE_QUOTE . ($bWithAlias && $oField->getAlias() ? $o->_AS($oField->getAlias()): '');
 
 			$aRet[] = $sField;
 		}
@@ -106,8 +127,8 @@ class SqlAccess extends SqlAccessA {
 				$aRet[$oField->getName()] = $this->getAccess($oField)->escapeValue($oField);
 			} catch ( ExceptionConstraint $e) {
 				//
-			} catch ( \vsc\ExceptionError $e) {
-				\vsc\d ($e, $oField, $this->getAccess($oField));
+			} catch ( ExceptionError $e) {
+				\vsc\d($e, $oField, $this->getAccess($oField));
 			}
 		}
 		return $aRet;
@@ -115,9 +136,9 @@ class SqlAccess extends SqlAccessA {
 
 	/**
 	 *
-	 * Enter description here ...
 	 * @param DomainObjectI $oDomainObject
 	 * @param array $aValues array (0 => array (// usable with fromArray), ... )
+	 * @return string
 	 */
 	public function outputInsertSql ( DomainObjectI $oDomainObject, $aValuesGroup = array()) {
 		$sSql = '';
@@ -160,6 +181,7 @@ class SqlAccess extends SqlAccessA {
 	/**
 	 * this is not exactly perfect, as it assumes the domain object has a primary key
 	 * @param DomainObjectI $oDomainObject
+	 * @return string
 	 */
 	public function outputUpdateSql ( DomainObjectI $oDomainObject) {
 		$sSql = '';
@@ -271,7 +293,7 @@ class SqlAccess extends SqlAccessA {
 	}
 
 	public function hasFieldAggregatorFunction ( FieldI $oField) {
-		return key_exists($oField->getName(), $this->aFieldAggregators);
+		return array_key_exists($oField->getName(), $this->aFieldAggregators);
 	}
 
 	public function getFieldsForSelect ( DomainObjectI $oDomainObject, $bWithAlias = false, $bAllFields = true) {
@@ -315,7 +337,7 @@ class SqlAccess extends SqlAccessA {
 		foreach ($oDomainObject->getFields() as $oField) {
 			if ($oField->hasValue()) {
 				// outputing only clauses not in a join
-				$aWheres[]	= new Clause ($oField, '=', $oField->getValue());
+				$aWheres[]	= new Clause($oField, '=', $oField->getValue());
 			}
 		}
 
@@ -331,6 +353,7 @@ class SqlAccess extends SqlAccessA {
 	 * @param DomainObjectA $oDomainObject
 	 * @param DomainObjectA ...
 	 * @param array $aFieldsArray
+	 * @return array
 	 */
 	public function loadByFilter () { // this shold be moved to the composite model
 		$aParameters = func_get_args();
@@ -497,7 +520,7 @@ class SqlAccess extends SqlAccessA {
 		} elseif (!is_null ($mSubject)) {
 			$w = new Clause($mSubject, $sPredicate, $mPredicative);
 		} else {
-			throw new Exception('Trying to add an empty where clause');
+			throw new ExceptionAccess ('Trying to add an empty where clause');
 		}
 		// this might generate an infinite recursion error on some PHP > 5.2 due to object comparison
 		if (!in_array ($w, $this->aClauses, true)) {
@@ -566,7 +589,7 @@ class SqlAccess extends SqlAccessA {
 	}
 
 	public function groupBy ( FieldA $oField) {
-		if (!key_exists($oField->getName(), $this->aGroupBys)) {
+		if (!array_key_exists($oField->getName(), $this->aGroupBys)) {
 			$this->aGroupBys[$oField->getName()] = $oField;
 		}
 		return $this;
@@ -578,7 +601,7 @@ class SqlAccess extends SqlAccessA {
 		} else {
 			$sDirection = ' DESC';
 		}
-		if (!key_exists($oField->getName(), $this->aOrderBys)) {
+		if (!array_key_exists($oField->getName(), $this->aOrderBys)) {
 			$this->aOrderBys[$oField->getName()] =  array (
 					$oField,
 					$sDirection
@@ -655,45 +678,45 @@ class SqlAccess extends SqlAccessA {
 	 * Outputs the SQL necessary for creating the table
 	 * @return string
 	 */
-	//	public function outputCreateTableSQL ( DomainObjectI $oDomainObject) {
-	//		if ($this->getConnection()->getType() == ConnectionType::mysql){
-	//			$bFullText = false;
-	//		}
-	//
-	//		$sRet = $this->getConnection()->_CREATE ($oDomainObject->getTableName()) . "\n";
-	//		$sRet .= ' ( ' . "\n";
-	//
-	//		/* @var FieldA $oColumn */
-	//		foreach ($oDomainObject->getFields () as $oColumn) {
-	//			$sRet .= "\t" . $oColumn->getName() . ' ' . $this->getAccess($oColumn)->getDefinition($oColumn) ;
-	//			$sRet .= ', ' . "\n";
-	//		}
-	//
-	//		$aIndexes = $oDomainObject->getIndexes(true);
-	//		if (is_array ($aIndexes) && !empty($aIndexes)) {
-	//			foreach ($aIndexes as $oIndex) {
-	//				if ( IndexA::isValid($oIndex)) {
-	//					// checking for fulltext indexes
-	//					if ($this->getConnection()->getType() == ConnectionType::mysql && !$bFullText && KeyFullText::isValid($oIndex)){
-	//						$bFullText	= true;
-	//						$sEngine	= 'MyISAM';
-	//					} elseif ($this->getConnection()->getType() == ConnectionType::mysql) {
-	//						$sEngine	= $this->getConnection()->getEngine();
-	//					}
-	//					// this needs to be replaced with connection functionality : something like getConstraint (type, columns)
-	//					$sRet .=  "\t" . $this->getAccess($oIndex)->getDefinition($oIndex) . ", \n";
-	//				}
-	//			}
-	//		}
-	//
-	//		$sRet = substr( $sRet, 0, -3 );
-	//
-	//		$sRet.= "\n" . ' ) ';
-	//
-	//		if ($this->getConnection()->getType() == ConnectionType::mysql) {
-	//			$sRet.= ' ENGINE ' . $sEngine;
-	//		}
-	//
-	//		return $sRet . ';';
-	//	}
+//	public function outputCreateTableSQL ( DomainObjectI $oDomainObject) {
+//		if ($this->getConnection()->getType() == ConnectionType::mysql){
+//			$bFullText = false;
+//		}
+//
+//		$sRet = $this->getConnection()->_CREATE ($oDomainObject->getTableName()) . "\n";
+//		$sRet .= ' ( ' . "\n";
+//
+//		/* @var FieldA $oColumn */
+//		foreach ($oDomainObject->getFields () as $oColumn) {
+//			$sRet .= "\t" . $oColumn->getName() . ' ' . $this->getAccess($oColumn)->getDefinition($oColumn) ;
+//			$sRet .= ', ' . "\n";
+//		}
+//
+//		$aIndexes = $oDomainObject->getIndexes(true);
+//		if (is_array ($aIndexes) && !empty($aIndexes)) {
+//			foreach ($aIndexes as $oIndex) {
+//				if ( IndexA::isValid($oIndex)) {
+//					// checking for fulltext indexes
+//					if ($this->getConnection()->getType() == ConnectionType::mysql && !$bFullText && KeyFullText::isValid($oIndex)){
+//						$bFullText	= true;
+//						$sEngine	= 'MyISAM';
+//					} elseif ($this->getConnection()->getType() == ConnectionType::mysql) {
+//						$sEngine	= $this->getConnection()->getEngine();
+//					}
+//					// this needs to be replaced with connection functionality : something like getConstraint (type, columns)
+//					$sRet .=  "\t" . $this->getAccess($oIndex)->getDefinition($oIndex) . ", \n";
+//				}
+//			}
+//		}
+//
+//		$sRet = substr( $sRet, 0, -3 );
+//
+//		$sRet.= "\n" . ' ) ';
+//
+//		if ($this->getConnection()->getType() == ConnectionType::mysql) {
+//			$sRet.= ' ENGINE ' . $sEngine;
+//		}
+//
+//		return $sRet . ';';
+//	}
 }

@@ -6,9 +6,13 @@
  */
 namespace orm\domain\access\fields;
 
+use orm\domain\access\AccessEntityA;
+use orm\domain\access\drivers\sqlDriverA;
+use orm\domain\domain\fields\FieldA;
+
 abstract class SqlFieldAccessA extends AccessEntityA {
 	public function escapeValue ( FieldA $oField) {
-		/* @var $o sqlDriverA */
+		/* @var sqlDriverA $o */
 		$o = $this->getGrammarHelper();
 		$mValue	=  $this->getConnection()->escape($oField->getValue());
 

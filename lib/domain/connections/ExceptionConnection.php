@@ -5,6 +5,7 @@
  * @date 2009.04.29
  */
 namespace orm\domain\connections;
+
 use orm\domain\domain\ExceptionDomain;
 
 class ExceptionConnection extends ExceptionDomain {}

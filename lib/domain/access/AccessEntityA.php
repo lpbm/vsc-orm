@@ -6,6 +6,7 @@
  */
 namespace orm\domain\access;
 
+use orm\domain\connections\ConnectionA;
 use vsc\infrastructure\Object;
 
 abstract class AccessEntityA extends Object {

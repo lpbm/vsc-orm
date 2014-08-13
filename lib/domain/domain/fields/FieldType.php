@@ -1,4 +1,6 @@
 <?php
+namespace orm\domain\domain\fields;
+
 interface FieldType {
 	const INTEGER	= 0;
 	const DECIMAL	= 1;

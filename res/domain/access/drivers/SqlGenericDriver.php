@@ -1,13 +1,22 @@
 <?php
 namespace orm\domain\access\drivers;
 
-class mySQLDriver extends SQLGenericDriver {
-	public $STRING_OPEN_QUOTE = '"',
-		$STRING_CLOSE_QUOTE = '"',
-		$FIELD_OPEN_QUOTE = '`',
-		$FIELD_CLOSE_QUOTE = '`',
-		$TRUE = '1',
-		$FALSE = '0';
+use orm\domain\domain\DomainObjectI;
+
+class SqlGenericDriver extends SqlDriverA {
+	/**
+	 *
+	 * @param array $incObj = array (array('field1','alias1),array('field2','alias2),...)
+	 * @return string
+	 */
+	public function _SELECT ($incObj){
+		if (empty ($incObj)) {
+			return '';
+		}
+
+		$retStr = 'SELECT ';
+		return $retStr . ' ' . $incObj . ' ';
+	}
 
 	public function _DELETE($sIncName) {
 		return ' DELETE FROM ' . $sIncName . ' ';
@@ -47,7 +56,7 @@ class mySQLDriver extends SQLGenericDriver {
 			return '';
 		}
 		if (is_array($incData)) {
-			$incData = implode("\n".', ',$incData);
+			$incData = implode( "\n".', ',$incData);
 		}
 
 		return ' FROM '.$incData.' ';
@@ -66,13 +75,8 @@ class mySQLDriver extends SQLGenericDriver {
 	public function _OR (){
 		return ' OR ';
 	}
-
 	public function _JOIN ($type) {
 		return $type . ' JOIN ';
-	}
-
-	public function _ON ($subject, $predicate, $predicative) {
-		return ' ON ' . $subject . ' '. $predicate . ' ' . $predicative;
 	}
 
 	/**
@@ -96,7 +100,8 @@ class mySQLDriver extends SQLGenericDriver {
 	 * TODO make it receive an array of tdoHabstractFields
 	 * (see _SELECT)
 	 *
-	 * @param string[] $colName
+	 * @param DomainObjectI $incObj
+	 * @internal param \string[] $colName
 	 * @return string
 	 */
 	public function _GROUP ($incObj = null){
@@ -108,23 +113,13 @@ class mySQLDriver extends SQLGenericDriver {
 		return $retStr.' '.$incObj;
 	}
 
-	public function _ORDER ($orderBys = null, $aDirections = null){
+	public function _ORDER ($orderBys = null){
 		if (empty($orderBys)) {
 			return '';
 		}
-		$sOrderBys = '';
-		if (!is_array($orderBys)) {
-			$orderBys = array($orderBys);
-		}
+		$retStr = ' ORDER BY ';
 
-		foreach ($orderBys as $key => $sField) {
-			$sOrderBys .= $this->FIELD_OPEN_QUOTE . $sField . $this->FIELD_CLOSE_QUOTE . ' ';
-			if (is_array ($aDirections)) {
-				$sOrderBys .= isset($aDirections[$key]) ? $aDirections[$key] : '';
-			}
-		}
-
-		return ' ORDER BY ' . $sOrderBys;
+		return $retStr.$orderBys;
 	}
 
 	public function _WHERE ($clause) {

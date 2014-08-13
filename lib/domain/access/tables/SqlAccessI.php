@@ -7,6 +7,8 @@
  */
 namespace orm\domain\access\tables;
 
+use orm\domain\domain\DomainObjectA;
+
 interface SqlAccessI {
 
 	static public function isValidConnection ($oConnection);

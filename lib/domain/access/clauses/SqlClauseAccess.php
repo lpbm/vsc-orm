@@ -6,6 +6,10 @@
  */
 namespace orm\domain\access\clauses;
 
+use orm\domain\access\drivers\SqlGenericDriver;
+use orm\domain\connections\ConnectionA;
+use orm\domain\domain\clauses\Clause;
+use orm\domain\domain\fields\FieldA;
 use vsc\infrastructure\Object;
 
 class SqlClauseAccess extends Object {
@@ -28,7 +32,7 @@ class SqlClauseAccess extends Object {
 	}
 
 	/**
-	 * @param GrammarHelper $oGrammarHelper
+	 * @param SqlGenericDriver $oGrammarHelper
 	 * @return void
 	 */
 	public function setGrammarHelper ($oGrammarHelper) {
@@ -36,7 +40,7 @@ class SqlClauseAccess extends Object {
 	}
 
 	/**
-	 * @return GrammarHelperA
+	 * @return SqlGenericDriver
 	 */
 	public function getGrammarHelper () {
 		return $this->oGrammarHelper;
@@ -47,7 +51,7 @@ class SqlClauseAccess extends Object {
 		$verb = null;
 		if (is_string($oClause->getSubject())) {
 			return $oClause->getSubject();
-		} elseif ($oClause->getSubject() instanceof Clause) {
+		} elseif (Clause::isValid($oClause->getSubject())) {
 			$subStr = $this->getDefinition($oClause->getSubject ());
 		} elseif ( FieldA::isValid($oClause->getSubject())) {
 			$subStr = ($oClause->getSubject()->getTableAlias() ?
@@ -76,7 +80,7 @@ class SqlClauseAccess extends Object {
 		} elseif (is_array($oClause->getPredicative ())) {
 			//FIXME: escape elements of the predicative array
 			$preStr =  '("'.implode('", "',$oClause->getPredicative ()).'")';
-		} elseif ($oClause->getPredicative () instanceof FieldA) {
+		} elseif (FieldA::isValid($oClause->getPredicative ())) {
 			$preStr = ($oClause->getPredicative()->getTableAlias() != 't' ? $this->getGrammarHelper()->FIELD_OPEN_QUOTE . $oClause->getPredicative()->getTableAlias() . $this->getGrammarHelper()->FIELD_CLOSE_QUOTE .'.': '').
 					$this->getGrammarHelper()->FIELD_OPEN_QUOTE . $oClause->getPredicative()->getName(). $this->getGrammarHelper()->FIELD_CLOSE_QUOTE;
 		} elseif ($oClause->getPredicative () instanceof Clause) {
@@ -85,7 +89,7 @@ class SqlClauseAccess extends Object {
 		}
 
 		$retStr = $subStr.' ' . $oClause->getPredicate() . ' '.$preStr;
-		if (($oClause->getSubject () instanceof Clause) && ($oClause->getPredicative () instanceof Clause))
+		if (Clause::isValid($oClause->getSubject ()) && (Clause::isValid($oClause->getPredicative ())))
 			return '('.$retStr.')';
 
 		return $retStr;

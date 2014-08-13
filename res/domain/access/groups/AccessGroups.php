@@ -7,6 +7,7 @@
  */
 namespace orm\domain\access\groups;
 
+use orm\domain\connections\ConnectionA;
 use vsc\infrastructure\Object;
 
 class AccessGroups extends Object {
@@ -39,5 +40,5 @@ class AccessGroups extends Object {
 		return  ' ' .$o->_GROUP($sGroupBy);
 	}
 
-	abstract public function getType();
+//	abstract public function getType();
 }

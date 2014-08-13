@@ -1,46 +1,31 @@
 <?php
 namespace orm\domain\access\drivers;
 
-class postgreSQLDriver extends SQLGenericDriver {
-	public $STRING_OPEN_QUOTE = '\'',
-		$STRING_CLOSE_QUOTE = '\'',
-		$FIELD_OPEN_QUOTE = '"',
-		$FIELD_CLOSE_QUOTE = '"',
-		$TRUE = 'true',
-		$FALSE = 'false';
-
-
-	/**
-	 *
-	 * @param array $incObj = array (array('field1','alias1),array('field2','alias2),...)
-	 * @return string
-	 */
-	public function _SELECT ($incObj){
-		if (empty ($incObj)) {
-			return '';
-		}
-
-		$retStr = 'SELECT ';
-		return $retStr.' '.$incObj.' ';
-	}
+class MySqlDriver extends SqlGenericDriver {
+	public $STRING_OPEN_QUOTE = '"',
+		$STRING_CLOSE_QUOTE = '"',
+		$FIELD_OPEN_QUOTE = '`',
+		$FIELD_CLOSE_QUOTE = '`',
+		$TRUE = '1',
+		$FALSE = '0';
 
 	public function _DELETE($sIncName) {
 		return ' DELETE FROM ' . $sIncName . ' ';
 	}
 
-	public function _CREATE ($sIncName){
-		return ' CREATE TABLE ' . $sIncName;
+	public function _CREATE ($sName){
+		return ' CREATE TABLE ' . $sName . ' ';
 	}
 
 	public function _SET(){
-		return ' ';
+		return ' SET ';
 	}
 
 	public function _INSERT ($incData){
 		if (empty ($incData)) {
 			return '';
 		}
-		return ' INSERT INTO ' . $incData;
+		return ' INSERT INTO '.$incData . ' ';
 	}
 
 	public function _VALUES ($incData) {
@@ -62,7 +47,7 @@ class postgreSQLDriver extends SQLGenericDriver {
 			return '';
 		}
 		if (is_array($incData)) {
-			$incData = implode('", "',$incData);
+			$incData = implode("\n".', ',$incData);
 		}
 
 		return ' FROM '.$incData.' ';
@@ -81,15 +66,20 @@ class postgreSQLDriver extends SQLGenericDriver {
 	public function _OR (){
 		return ' OR ';
 	}
-	public function _JOIN ($type) {
 
+	public function _JOIN ($type) {
+		return $type . ' JOIN ';
+	}
+
+	public function _ON ($subject, $predicate, $predicative) {
+		return ' ON ' . $subject . ' '. $predicate . ' ' . $predicative;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function _AS ($str){
-		return ' AS ' . $str;
+		return ' AS '.$str;
 	}
 
 	public function _LIMIT ($start, $end = 0){
@@ -115,29 +105,34 @@ class postgreSQLDriver extends SQLGenericDriver {
 		}
 
 		$retStr = ' GROUP BY ';
-		return $retStr . ' ' . $incObj;
+		return $retStr.' '.$incObj;
 	}
 
-	/**
-	 * method that abstracts the ORDER BY clauses
-	 *
-	 * @param 	string $orderBys
-	 * @return	string
-	 */
-	public function _ORDER ($orderBys = null){
+	public function _ORDER ($orderBys = null, $aDirections = null){
 		if (empty($orderBys)) {
 			return '';
 		}
-		$retStr = ' ORDER BY ';
+		$sOrderBys = '';
+		if (!is_array($orderBys)) {
+			$orderBys = array($orderBys);
+		}
 
-		return $retStr.$orderBys;
+		foreach ($orderBys as $key => $sField) {
+			$sOrderBys .= $this->FIELD_OPEN_QUOTE . $sField . $this->FIELD_CLOSE_QUOTE . ' ';
+			if (is_array ($aDirections)) {
+				$sOrderBys .= isset($aDirections[$key]) ? $aDirections[$key] : '';
+			}
+		}
+
+		return ' ORDER BY ' . $sOrderBys;
 	}
 
 	public function _WHERE ($clause) {
-		return ' WHERE ' . $clause;
+		return ' WHERE '.$clause;
 	}
 
 	public function _NULL ($bIsNull = true) {
+		// ?
 		return (!$bIsNull ? ' NOT ' : ' ') . 'NULL';
 	}
 }

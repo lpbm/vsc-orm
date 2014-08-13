@@ -6,10 +6,15 @@
  */
 namespace orm\domain\access\joins;
 
+use orm\domain\access\AccessEntityA;
+use orm\domain\access\drivers\MySqlDriver;
+use orm\domain\domain\fields\FieldA;
+use orm\domain\domain\joins\JoinA;
+
 abstract class SqlJoinAccessA extends AccessEntityA {
 
 	public function getDefinition ( JoinA $oJoin) {
-		/* @var $o mySQLDriver */
+		/* @var MySqlDriver $o */
 		$o = $this->getGrammarHelper();
 
 		$oRightField = $oJoin->getRight();

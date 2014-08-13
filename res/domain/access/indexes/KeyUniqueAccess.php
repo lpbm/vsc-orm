@@ -7,6 +7,9 @@
  */
 namespace orm\domain\access\indexes;
 
+use orm\domain\connections\ConnectionType;
+use orm\domain\domain\indexes\IndexA;
+
 class KeyUniqueAccess extends SqlIndexAccessA {
 	public function getType( IndexA $oIndex) {}
 	public function getDefinition ( IndexA $oIndex) {

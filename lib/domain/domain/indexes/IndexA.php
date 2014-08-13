@@ -5,8 +5,13 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 09.03.19
  */
+namespace orm\domain\domain\indexes;
 
+use orm\domain\domain\fields\FieldI;
+use orm\domain\domain\fields\FieldA;
+use orm\domain\ExceptionIndex;
 use vsc\infrastructure\Object;
+
 
 abstract class IndexA extends Object implements FieldI  {
 	protected $name;
@@ -22,10 +27,10 @@ abstract class IndexA extends Object implements FieldI  {
 				if ( FieldA::isValid($oField))
 					$this->addField ($oField);
 				else
-					throw new IndexException ('The object passed can not be used as an index.');
+					throw new ExceptionIndex ('The object passed can not be used as an index.');
 			}
 		} else {
-			throw new IndexException ('The data used to instantiate the table\'s primary key is invalid.');
+			throw new ExceptionIndex ('The data used to instantiate the table\'s primary key is invalid.');
 		}
 	}
 
@@ -53,7 +58,7 @@ abstract class IndexA extends Object implements FieldI  {
 //	}
 
 	public function hasField ( FieldA $oField) {
-		return (key_exists($oField->getName(), $this->fields) && FieldA::isValid($oField));
+		return (array_key_exists($oField->getName(), $this->fields) && FieldA::isValid($oField));
 	}
 
 	public function getIndexComponents () {

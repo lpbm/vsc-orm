@@ -7,6 +7,13 @@
  */
 namespace orm\domain\models;
 
+use orm\domain\access\tables\SqlAccess;
+use orm\domain\connections\ConnectionA;
+use orm\domain\domain\CompositeDomainObjectI;
+use orm\domain\domain\DomainObjectA;
+use orm\domain\domain\fields\FieldA;
+use orm\domain\domain\indexes\IndexA;
+
 abstract class CompositeSqlModelA extends SimpleSqlModelA implements CompositeDomainObjectI {
 	private $oConnection;
 	private $oHelper;
@@ -14,10 +21,10 @@ abstract class CompositeSqlModelA extends SimpleSqlModelA implements CompositeDo
 	private $aDomainLinks;
 
 	public function getDomainObjects () {
-		$oRef = new ReflectionObject($this);
+		$oRef = new \ReflectionObject($this);
 		$aRet = array();
-		$aProperties = $oRef->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PRIVATE);
-		/* @var $oProperty ReflectionProperty */
+		$aProperties = $oRef->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PRIVATE);
+		/* @var \ReflectionProperty $oProperty */
 		foreach ($aProperties as $oProperty) {
 			if (!$oProperty->isPrivate()) {
 				$oValue = $oProperty->getValue($this);
@@ -141,7 +148,7 @@ abstract class CompositeSqlModelA extends SimpleSqlModelA implements CompositeDo
 	public function getIndexes ($bWithPrimaryKey = false) {}
 
 	public function getById ($iId) {
-		$a = new SimpleSqlAccess();
+		$a = new SqlAccess();
 		$a->setConnection($this->getConnection());
 
 		d ($a->outputSelectSql($this->getDomainObjects()));

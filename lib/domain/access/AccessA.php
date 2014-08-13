@@ -5,14 +5,18 @@
  * @date 2010.06.02
  */
 namespace orm\domain\access;
+
 use orm\domain\access\connections\ConnectionFactory;
-use orm\domain\access\drivers\mySQLDriver;
+use orm\domain\access\drivers\MySqlDriver;
 use orm\domain\access\drivers\sqlDriverA;
-use orm\domain\access\drivers\SQLGenericDriver;
+use orm\domain\access\drivers\SqlGenericDriver;
 use orm\domain\connections\ConnectionA;
 use orm\domain\connections\ConnectionType;
 use orm\domain\connections\ExceptionConnection;
+use orm\domain\domain\CompositeDomainObjectA;
+use orm\domain\domain\DomainObjectA;
 use orm\domain\domain\DomainObjectI;
+use orm\domain\models\SimpleSqlModelA;
 use vsc\infrastructure\Object;
 
 abstract class AccessA extends Object {
@@ -21,22 +25,22 @@ abstract class AccessA extends Object {
 	 */
 	private $oConnection;
 	/**
-	 * @var SQLGenericDriver
+	 * @var SqlGenericDriver
 	 */
 	private $oGrammarHelper;
 
-	public function setGrammarHelper (SQLGenericDriver $oGrammarHelper) {
+	public function setGrammarHelper (SqlGenericDriver $oGrammarHelper) {
 		$this->oGrammarHelper = $oGrammarHelper;
 	}
 
 	/**
-	 * @return SQLGenericDriver
+	 * @return SqlGenericDriver
 	 */
 	public function getGrammarHelper () {
 		if (!sqlDriverA::isValid($this->oGrammarHelper)) {
 			switch ($this->getDatabaseType()) {
 				case ConnectionType::mysql :
-					return new mySQLDriver();
+					return new MySqlDriver();
 
 			}
 			$this->setGrammarHelper($oGrammarHelper);
@@ -128,7 +132,7 @@ abstract class AccessA extends Object {
 		$sStr = '';
 		$aStrClauses = array();
 		if ( CompositeDomainObjectA::isValid($oDomainObject)) {
-			/* @var SQLModelA $oDomainObject */
+			/* @var SimpleSqlModelA $oDomainObject */
 			$aClauses = $oDomainObject->getClauses();
 		}
 		if ($aClauses > 0 ) {
@@ -172,9 +176,9 @@ abstract class AccessA extends Object {
 
 		$sRet = $o->_SELECT (implode (', ', $aSelects)) .
 			$o->_FROM(implode (', ', $aNames)) ."\n" .
-		d ($sRet);
+		\vsc\d ($sRet);
 		//$this->getJoinsString() .
-		$o->_WHERE($this->getClausesString ()) .
+		$o->_WHERE($this->getClausesString ($oDomainObject)) .
 		$this->getGroupByString() .
 		$this->getOrderByString() .
 		$this->getLimitString();
@@ -191,11 +195,11 @@ abstract class AccessA extends Object {
 	 * @return string
 	 */
 	public function buildQuery ($iType, DomainObjectI $oDomainObject) {
-		switch ($iType) {
-			case QueryType::SELECT:
-				return $this->getSelect($oDomainObject);
-			break;
-		}
+//		switch ($iType) {
+//			case QueryType::SELECT:
+//				return $this->getSelect($oDomainObject);
+//			break;
+//		}
 	}
 
 	public function loadByUnique ( DomainObjectI $oDomainObject) {}

@@ -7,6 +7,10 @@
  */
 namespace orm\domain\domain\indexes;
 
+use orm\domain\ExceptionIndex;
+use orm\domain\domain\fields\FieldI;
+use orm\domain\domain\fields\FieldA;
+
 class KeyIndex extends IndexA  {
 	public function __construct ( FieldI $oField) {
 		$mIncomingStuff = func_get_args();
@@ -23,7 +27,7 @@ class KeyIndex extends IndexA  {
 					$oField->setIsNullable(false);
 					$aRet[] = $oField;
 				} else {
-					throw new IndexException('The object passed can not be used as a primary key.');
+					throw new ExceptionIndex('The object passed can not be used as a primary key.');
 				}
 			}
 			parent::__construct($aRet);

@@ -1,9 +1,15 @@
 <?php
 namespace orm\domain\access\connections;
 
+use orm\domain\connections\ConnectionA;
+use orm\domain\connections\ConnectionType;
+use orm\domain\connections\ExceptionConnection;
+use orm\domain\domain\ExceptionDomain;
+use vsc\Exception;
 use vsc\ExceptionUnimplemented;
+use vsc\infrastructure\vsc;
 
-abstract class postgreSql extends ConnectionA {
+class PostgreSql extends ConnectionA {
 	public 		$conn,
 				$link;
 
@@ -15,6 +21,7 @@ abstract class postgreSql extends ConnectionA {
 		return (pg_connection_status($this->link) !== PGSQL_CONNECTION_OK);
 	}
 
+	/*/
 	abstract protected function getDatabaseType();
 
 	abstract protected function getDatabaseHost();
@@ -24,6 +31,7 @@ abstract class postgreSql extends ConnectionA {
 	abstract protected function getDatabasePassword();
 
 	abstract protected function getDatabaseName();
+	/**/
 
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null , $dbName = null ){
 		if (!extension_loaded('pgsql')) {
@@ -64,7 +72,7 @@ abstract class postgreSql extends ConnectionA {
 		try {
 			$this->connect ($dbHost, $dbUser, $dbPass, $dbName);
 		} catch (Exception $e) {
-			_e($e);
+			\vsc\_e($e);
 		}
 	}
 
@@ -84,7 +92,7 @@ abstract class postgreSql extends ConnectionA {
 	protected function connect ($dbHost = null, $dbUser = null, $dbPass = null , $dbName = null ) {
 		try {
 			$this->link	= pg_connect('host='.$dbHost.' user='. $dbUser.' password='.$dbPass . (!empty ($dbName) ? 'dbname='.$dbName : '' ));
-		} catch (ErrorException $e) {
+		} catch (\ErrorException $e) {
 			$this->error = $e->getMessage();
 			trigger_error ($this->error, E_USER_ERROR);
 		}

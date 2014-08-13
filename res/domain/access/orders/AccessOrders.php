@@ -7,6 +7,7 @@
  */
 namespace orm\domain\access\orders;
 
+use orm\domain\connections\ConnectionA;
 use vsc\infrastructure\Object;
 
 class AccessOrders extends Object {
@@ -39,5 +40,5 @@ class AccessOrders extends Object {
 		return  ' ' .$o->_ORDER($sOrderBy);
 	}
 
-	abstract public function getType();
+//	abstract public function getType();
 }

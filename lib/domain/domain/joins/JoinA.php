@@ -4,6 +4,12 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.06.02
  */
+namespace orm\domain\domain\joins;
+
+use orm\domain\access\joins\JoinType;
+use orm\domain\domain\clauses\Clause;
+use orm\domain\domain\fields\FieldA;
+
 class JoinA extends Clause {
 	private $iType = JoinType::INNER;
 

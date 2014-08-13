@@ -7,6 +7,28 @@
  */
 namespace orm\domain\access;
 
+use orm\domain\access\clauses\SqlClauseAccess;
+use orm\domain\access\drivers\MySqlDriver;
+use orm\domain\access\drivers\PostgreSqlDriver;
+use orm\domain\access\fields\FieldDateTimeAccess;
+use orm\domain\access\fields\FieldDecimalAccess;
+use orm\domain\access\fields\FieldEnumAccess;
+use orm\domain\access\fields\FieldIntegerAccess;
+use orm\domain\access\fields\FieldTextAccess;
+use orm\domain\access\indexes\KeyFullTextAccess;
+use orm\domain\access\indexes\KeyIndexAccess;
+use orm\domain\access\indexes\KeyPrimaryAccess;
+use orm\domain\access\indexes\KeyUniqueAccess;
+use orm\domain\access\joins\JoinInnerAccess;
+use orm\domain\access\joins\JoinOuterAccess;
+use orm\domain\access\joins\JoinType;
+use orm\domain\domain\indexes\IndexType;
+use orm\domain\domain\joins\JoinA;
+use orm\domain\connections\ConnectionA;
+use orm\domain\connections\ConnectionType;
+use orm\domain\domain\fields\FieldA;
+use orm\domain\domain\fields\FieldType;
+use orm\domain\domain\indexes\IndexA;
 use vsc\infrastructure\Object;
 
 class AccessFactory extends Object {
@@ -39,10 +61,10 @@ class AccessFactory extends Object {
 	 public function getGrammarHelper ( ConnectionA  $oConnection) {
 	 	switch ($oConnection->getType()) {
 	 		case ConnectionType::mysql:
-	 			return new mySQLDriver();
+	 			return new MySqlDriver();
 	 			break;
 	 		case ConnectionType::postgresql:
-	 			return new postgreSQLDriver();
+	 			return new PostgreSqlDriver();
 	 			break;
 	 		case ConnectionType::sqlite:
 	 		case ConnectionType::mssql:

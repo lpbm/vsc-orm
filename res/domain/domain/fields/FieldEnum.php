@@ -7,6 +7,8 @@
  */
 namespace orm\domain\domain\fields;
 
+use orm\domain\domain\ExceptionDomain;
+
 class FieldEnum extends FieldA {
 	protected $values = array();
 
