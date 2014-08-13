@@ -7,9 +7,10 @@ namespace orm\domain\connections;
 use orm\domain\access\connections\MySql;
 use orm\domain\access\connections\MySqlIm;
 use orm\domain\connections\NullSql;
-use orm\domain\access\connections\PostgreSql;
+use orm\domain\connections\PostgreSql;
 use orm\domain\access\drivers\SqlGenericDriver;
 use vsc\ExceptionUnimplemented;
+use vsc\infrastructure\vsc;
 
 class ConnectionFactory {
 	static private	$instance	= null;
@@ -25,6 +26,15 @@ class ConnectionFactory {
 		return in_array ($iConnectionType, $oReflectedSelf->getConstants());
 	}
 
+	/**
+	 * @param int $iConnectionType
+	 * @param string $dbHost
+	 * @param string $dbUser
+	 * @param string $dbPass
+	 * @param string $dbName
+	 * @return null|MySql|MySqlIm|PostgreSql|NullSql
+	 * @throws \vsc\ExceptionUnimplemented
+	 */
 	static public function getInstance ($iConnectionType, $dbHost = null, $dbUser = null, $dbPass = null, $dbName = null) {
 		if (!self::validType ($iConnectionType)) {
 			self::$instance = new NullSql();
@@ -63,7 +73,7 @@ class ConnectionFactory {
 	 * returns the current instance of the DB connection
 	 * or a new connection of type $incString
 	 *
-	 * @param string $incString
+	 * @param int $iConnectionType
 	 * @param string $dbHost
 	 * @param string $dbUser
 	 * @param string $dbPass
@@ -71,8 +81,8 @@ class ConnectionFactory {
 	 * @return SqlGenericDriver
 	 */
 
-	static public function connect($incString, $dbHost = null, $dbUser = null, $dbPass = null, $dbName = null) {
-		self::getInstance($incString, $dbHost, $dbUser, $dbPass, $dbName);
+	static public function connect($iConnectionType, $dbHost = null, $dbUser = null, $dbPass = null, $dbName = null) {
+		self::$instance = self::getInstance($iConnectionType, $dbHost, $dbUser, $dbPass, $dbName);
 
 		return self::$instance;
 	}

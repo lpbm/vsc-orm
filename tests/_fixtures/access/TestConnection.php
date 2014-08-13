@@ -3,7 +3,7 @@ namespace _fixtures\access;
 
 use \orm\domain\access\AccessA;
 
-class testConnection extends AccessA {
+class TestConnection extends AccessA {
 
     protected function getDatabaseType()
     {

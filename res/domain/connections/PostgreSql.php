@@ -1,13 +1,9 @@
 <?php
-namespace orm\domain\access\connections;
+namespace orm\domain\connections;
 
-use orm\domain\connections\ConnectionA;
-use orm\domain\connections\ConnectionType;
-use orm\domain\connections\ExceptionConnection;
 use orm\domain\domain\ExceptionDomain;
 use vsc\Exception;
 use vsc\ExceptionUnimplemented;
-use vsc\infrastructure\vsc;
 
 class PostgreSql extends ConnectionA {
 	public 		$conn,

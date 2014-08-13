@@ -6,6 +6,6 @@
  */
 namespace orm\domain\connections;
 
-use orm\domain\domain\ExceptionDomain;
+use orm\domain\ExceptionDomain;
 
 class ExceptionConnection extends ExceptionDomain {}
