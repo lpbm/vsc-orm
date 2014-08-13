@@ -3,7 +3,7 @@ namespace \_fixtures\domain\domain;
 
 use \orm\domain\domain;
 
-class dummyTable extends DomainObjectA {
+class DummyTable extends DomainObjectA {
 	protected $name = 'dummy';
 	public $id;
 	public $payload;
