@@ -15,7 +15,7 @@
  * OBS: maybe the static methods (_AND, _OR, sa.) can be conained into
  *  an external object. (??!)
  */
-namespace orm\domain\access\connections;
+namespace orm\domain\connections;
 
 use orm\domain\connections\ConnectionA;
 use orm\domain\connections\ConnectionType;
@@ -203,5 +203,10 @@ class MySql extends ConnectionA {
 
 		$sQuery = 'COMMIT;';
 		return $this->query($sQuery);
+	}
+
+	public function getFirst()
+	{
+		// TODO: Implement getFirst() method.
 	}
 }

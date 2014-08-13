@@ -5,9 +5,6 @@
  */
 namespace orm\domain\connections;
 
-use orm\domain\connections\ConnectionA;
-use orm\domain\connections\ConnectionFactory;
-use orm\domain\connections\ConnectionType;
 use vsc\infrastructure\String;
 use vsc\ExceptionUnimplemented;
 
@@ -44,4 +41,34 @@ class NullSql extends ConnectionA {
 	public function rollBackTransaction () {}
 
 	public function commitTransaction () {}
+
+	protected function connect()
+	{
+		// TODO: Implement connect() method.
+	}
+
+	public function escape($incData)
+	{
+		// TODO: Implement escape() method.
+	}
+
+	public function query($query)
+	{
+		// TODO: Implement query() method.
+	}
+
+	public function getRow()
+	{
+		// TODO: Implement getRow() method.
+	}
+
+	public function getArray()
+	{
+		// TODO: Implement getArray() method.
+	}
+
+	public function getFirst()
+	{
+		// TODO: Implement getFirst() method.
+	}
 }

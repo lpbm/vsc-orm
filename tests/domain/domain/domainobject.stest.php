@@ -15,7 +15,7 @@ class DomainObjectTest extends Snap_UnitTestCase {
 	public function setUp() {
 		// begin transaction shit - if the case
 		date_default_timezone_set('Europe/Bucharest');
-		$this->state = new dummyTable();
+		$this->state = new DummyTable();
 	}
 
 	public function tearDown () {
@@ -23,7 +23,7 @@ class DomainObjectTest extends Snap_UnitTestCase {
 	}
 
 	public function testInstantiation1 (){
-		return $this->assertIsA($this->state, 'dummyTable');
+		return $this->assertIsA($this->state, 'DummyTable');
 	}
 
 	public function testInstantiation2 (){

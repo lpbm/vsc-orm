@@ -232,4 +232,9 @@ class mdb2 extends ConnectionA {
 	public function commitTransaction () {
 		// TODO: Implement commitTransaction() method.
 	}
+
+	public function getFirst()
+	{
+		// TODO: Implement getFirst() method.
+	}
 }

@@ -8,7 +8,7 @@ namespace orm\domain\access;
 
 use orm\domain\connections\ConnectionFactory;
 use orm\domain\access\drivers\MySqlDriver;
-use orm\domain\access\drivers\sqlDriverA;
+use orm\domain\access\drivers\SqlDriverA;
 use orm\domain\access\drivers\SqlGenericDriver;
 use orm\domain\connections\ConnectionA;
 use orm\domain\connections\ConnectionType;
@@ -37,7 +37,7 @@ abstract class AccessA extends Object {
 	 * @return SqlGenericDriver
 	 */
 	public function getGrammarHelper () {
-		if (!sqlDriverA::isValid($this->oGrammarHelper)) {
+		if (!SqlDriverA::isValid($this->oGrammarHelper)) {
 			switch ($this->getDatabaseType()) {
 				case ConnectionType::mysql :
 					return new MySqlDriver();
@@ -157,7 +157,7 @@ abstract class AccessA extends Object {
 			$aParameters[$oDomainObject->getName()] = $oDomainObject;
 		}
 
-		d ( DomainObjectA::isValid($oDomainObject), CompositeDomainObjectA::isValid($oDomainObject));
+//		d ( DomainObjectA::isValid($oDomainObject), CompositeDomainObjectA::isValid($oDomainObject));
 		foreach ($aParameters as $key => $oParameter) {
 			if (!DomainObjectA::isValid($oParameter)) {
 				unset ($aParameters[$key]);
@@ -175,7 +175,6 @@ abstract class AccessA extends Object {
 
 		$sRet = $o->_SELECT (implode (', ', $aSelects)) .
 			$o->_FROM(implode (', ', $aNames)) ."\n" .
-		\vsc\d ($sRet);
 		//$this->getJoinsString() .
 		$o->_WHERE($this->getClausesString ($oDomainObject)) .
 		$this->getGroupByString() .

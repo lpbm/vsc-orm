@@ -1,6 +1,8 @@
 <?php
 namespace orm\domain\access\drivers;
 
+use orm\domain\domain\fields\FieldA;
+
 class MySqlDriver extends SqlGenericDriver {
 	public $STRING_OPEN_QUOTE = '"',
 		$STRING_CLOSE_QUOTE = '"',
@@ -76,6 +78,7 @@ class MySqlDriver extends SqlGenericDriver {
 	}
 
 	/**
+	 * @param $str
 	 * @return string
 	 */
 	public function _AS ($str){
@@ -93,10 +96,10 @@ class MySqlDriver extends SqlGenericDriver {
 	}
 
 	/**
-	 * TODO make it receive an array of tdoHabstractFields
+	 * TODO make it receive an array of AbstractFields
 	 * (see _SELECT)
 	 *
-	 * @param string[] $colName
+	 * @param FieldA $incObj
 	 * @return string
 	 */
 	public function _GROUP ($incObj = null){

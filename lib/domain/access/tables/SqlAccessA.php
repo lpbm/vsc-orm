@@ -10,7 +10,7 @@ namespace orm\domain\access\tables;
 use orm\domain\connections\ConnectionFactory;
 use orm\domain\access\drivers\MySqlDriver;
 use orm\domain\access\drivers\PostgreSqlDriver;
-use orm\domain\access\drivers\sqlDriverA;
+use orm\domain\access\drivers\SqlDriverA;
 use orm\domain\access\drivers\SqlGenericDriver;
 use orm\domain\connections\ConnectionA;
 use orm\domain\connections\ConnectionType;
@@ -24,7 +24,7 @@ abstract class SqlAccessA extends Object implements SqlAccessI {
 	 */
 	private $oConnection;
 	/**
-	 * var sqlDriverA
+	 * var SqlDriverA
 	 */
 	private $oDriver;
 
@@ -67,7 +67,7 @@ abstract class SqlAccessA extends Object implements SqlAccessI {
 	}
 
 	public function getDriver () {
-		if (!sqlDriverA::isValid($this->oDriver)) {
+		if (!SqlDriverA::isValid($this->oDriver)) {
 			$iDatabaseType = $this->getDatabaseType();
 			switch ($iDatabaseType) {
 				case ConnectionType::postgresql:

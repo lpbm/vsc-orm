@@ -11,9 +11,14 @@ namespace orm\domain\connections;
 use vsc\infrastructure\Object;
 
 abstract class ConnectionA extends Object {
-	public 		$conn,
-				$error,
-				$link;
+	public $conn;
+	public $error;
+	public $link;
+
+	private $sDatabaseName;
+	private $sDatabasePassword;
+	private $sDatabaseUser;
+	private $sDatabaseHost;
 
 	/**
 	 * just a function to trigger an error in the eventuality of using
@@ -26,31 +31,52 @@ abstract class ConnectionA extends Object {
 	 * @param string $dbUser
 	 * @param string $dbPass
 	 */
-	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null ) {}
+	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null ) {
+		$this->sDatabaseHost = $dbHost;
+		$this->sDatabaseUser = $dbUser;
+		$this->sDatabasePassword = $dbPass;
+	}
+
+	protected function getDatabaseHost() {
+		return $this->sDatabaseHost;
+	}
+
+	protected function getDatabaseUser() {
+		return $this->sDatabaseUser;
+	}
+
+	protected function getDatabasePassword() {
+		return $this->sDatabasePassword;
+	}
+
+	protected function getDatabaseName() {
+		return $this->sDatabaseName;
+	}
+	public function selectDatabase($dbName) {
+		$this->sDatabaseName = $dbName;
+	}
+
+//	static public function isValid ($oIncomingConnection) {
+//		return ($oIncomingConnection instanceof static);
+//	}
 
 	public function __destruct() {}
 
-	private function connect() {}
+	abstract protected function connect();
 
 	abstract public function getType ();
 
-	public function selectDatabase($incData) {}
+	abstract public function escape ($incData);
 
-	public function escape ($incData) {}
+	abstract public function query($query);
 
-	public function query($query) {}
+	abstract public function getRow ();
 
-	public function getRow () {}
+	abstract public function getArray ();
 
-	public function getArray () {}
+	abstract public function getFirst ();
 
-	public function getFirst () {}
-
-	public function close () {}
-
-	static public function isValid ($oIncomingConnection) {
-		return ($oIncomingConnection instanceof static);
-	}
+	abstract public function close ();
 
 	abstract public function startTransaction ($bAutoCommit = false);
 

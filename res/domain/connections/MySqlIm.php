@@ -15,7 +15,7 @@
  * OBS: maybe the static methods (_AND, _OR, sa.) can be conained into
  *  an external object. (??!)
  */
-namespace orm\domain\access\connections;
+namespace orm\domain\connections;
 
 use orm\domain\connections\ConnectionA;
 use orm\domain\connections\ConnectionType;
@@ -44,58 +44,13 @@ class MySqlIm extends ConnectionA {
 	public function isConnected () {
 		return (!is_null($this->link->connect_error));
 	}
-/*/
-	abstract protected function getDatabaseType();
 
-	abstract protected function getDatabaseHost();
-
-	abstract protected function getDatabaseUser();
-
-	abstract protected function getDatabasePassword();
-
-	abstract protected function getDatabaseName();
-/**/
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null, $dbName = null ){
 		if (!extension_loaded('mysqli')) {
 			throw new ExceptionConnection ('MySQL improved extension is not loaded.');
 		}
-		if ( empty ($dbHost) ) {
-			if ( is_null ($this->getDatabaseHost()) ) {
-				throw new ExceptionConnection ('Database connection data missing: [DB_HOST]');
-			} else {
-				$dbHost = $this->getDatabaseHost();
-			}
-		}
-
-		if ( empty ($dbUser) ) {
-			if ( is_null ($this->getDatabaseUser()) ) {
-				throw new ExceptionConnection ('Database connection data missing: [DB_USER]');
-			} else {
-				$dbUser = $this->getDatabaseUser();
-			}
-		}
-
-		if( empty($dbPass) ) {
-			if ( is_null ($this->getDatabasePassword()) ) {
-				throw new ExceptionConnection ('Database connection data missing: [DB_PASS]');
-			} else {
-				$dbPass = $this->getDatabasePassword();
-			}
-		}
-
-		if( !is_null($dbName) ) {
-//			if (is_null ($this->getDatabaseName()) ) {
-//				throw new ExceptionConnection ('Database connection data missing: [DB_NAME]');
-//			} else {
-//				$dbName = $this->getDatabaseName();
-//			}
-//		} else {
-		}
-		try {
-			$this->connect ($dbHost, $dbUser, $dbPass, $dbName);
-		} catch (\Exception $e) {
-			_e($e);
-		}
+		parent::__construct ( $dbHost, $dbUser, $dbPass);
+		$this->connect ($dbHost, $dbUser, $dbPass, $dbName);
 	}
 
 	public function getEngine () {
@@ -312,5 +267,10 @@ class MySqlIm extends ConnectionA {
 
 		$sQuery = 'COMMIT;';
 				return $this->query($sQuery);
+	}
+
+	public function getFirst()
+	{
+		// TODO: Implement getFirst() method.
 	}
 }

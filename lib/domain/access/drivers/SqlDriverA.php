@@ -8,7 +8,7 @@ namespace orm\domain\access\drivers;
 
 use vsc\infrastructure\Object;
 
-abstract class sqlDriverA extends Object {
+abstract class SqlDriverA extends Object {
 	public 	$STRING_OPEN_QUOTE,
 			$STRING_CLOSE_QUOTE,
 			$FIELD_OPEN_QUOTE,

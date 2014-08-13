@@ -2,12 +2,10 @@
 namespace orm\domain\connections;
 
 use orm\domain\domain\ExceptionDomain;
-use vsc\Exception;
 use vsc\ExceptionUnimplemented;
+use vsc\infrastructure\vsc;
 
 class PostgreSql extends ConnectionA {
-	public 		$conn,
-				$link;
 
 	static public function isValid ($oLink) {
 		return !is_null($oLink) && pg_connection_status($oLink) !== PGSQL_CONNECTION_OK;
@@ -17,58 +15,21 @@ class PostgreSql extends ConnectionA {
 		return (pg_connection_status($this->link) !== PGSQL_CONNECTION_OK);
 	}
 
-	/*/
-	abstract protected function getDatabaseType();
-
-	abstract protected function getDatabaseHost();
-
-	abstract protected function getDatabaseUser();
-
-	abstract protected function getDatabasePassword();
-
-	abstract protected function getDatabaseName();
-	/**/
+	protected function getDatabaseType() {
+		return ConnectionType::postgresql;
+	}
 
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null , $dbName = null ){
 		if (!extension_loaded('pgsql')) {
 			throw new ExceptionConnection ('PostgreSQL extension is not loaded.');
 		}
-		if ( empty ($dbHost) ) {
-			if ( is_null ($this->getDatabaseHost()) ) {
-				throw new ExceptionConnection ('Database connection data missing: [DB_HOST]');
-			} else {
-				$dbHost = $this->getDatabaseHost();
-			}
-		}
-
-		if ( empty ($dbUser) ) {
-			if ( is_null ($this->getDatabaseUser()) ) {
-				throw new ExceptionConnection ('Database connection data missing: [DB_USER]');
-			} else {
-				$dbUser = $this->getDatabaseUser();
-			}
-		}
-
-		if ( empty($dbPass) ) {
-			if ( is_null ($this->getDatabasePassword()) ) {
-				throw new ExceptionConnection ('Database connection data missing: [DB_PASS]');
-			} else {
-				$dbPass = $this->getDatabasePassword();
-			}
-		}
-
-		if ( empty($dbName) ) {
-			if (is_null ($this->getDatabaseName()) ) {
-				throw new ExceptionConnection ('Database connection data missing: [DB_NAME]');
-			} else {
-				$dbName = $this->getDatabaseName();
-			}
-		}
+		parent::__construct ( $dbHost, $dbUser, $dbPass);
+		$this->selectDatabase($dbName);
 
 		try {
 			$this->connect ($dbHost, $dbUser, $dbPass, $dbName);
-		} catch (Exception $e) {
-			\vsc\_e($e);
+		} catch (\Exception $e) {
+			vsc::d($e);
 		}
 	}
 
@@ -258,5 +219,10 @@ class PostgreSql extends ConnectionA {
 
 	public function commitTransaction () {
 		throw new ExceptionUnimplemented('Transaction support for postgres is not currenty implemented');
+	}
+
+	public function getFirst()
+	{
+		throw new ExceptionUnimplemented('getFirst support for postgres is not currenty implemented');
 	}
 }

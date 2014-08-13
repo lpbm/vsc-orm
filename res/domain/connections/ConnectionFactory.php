@@ -4,10 +4,6 @@
  */
 namespace orm\domain\connections;
 
-use orm\domain\access\connections\MySql;
-use orm\domain\access\connections\MySqlIm;
-use orm\domain\connections\NullSql;
-use orm\domain\connections\PostgreSql;
 use orm\domain\access\drivers\SqlGenericDriver;
 use vsc\ExceptionUnimplemented;
 use vsc\infrastructure\vsc;

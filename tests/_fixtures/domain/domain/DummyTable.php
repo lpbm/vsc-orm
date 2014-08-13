@@ -2,6 +2,9 @@
 namespace \_fixtures\domain\domain;
 
 use \orm\domain\domain;
+use orm\domain\domain\fields\FieldInteger;
+use orm\domain\domain\fields\FieldDateTime;
+use orm\domain\domain\fields\FieldText;
 
 class DummyTable extends DomainObjectA {
 	protected $name = 'dummy';
