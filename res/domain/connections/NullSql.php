@@ -3,14 +3,15 @@
  * Pseudo null to be implemented (ehm, inherited) by the rest
  * of the DB classes.
  */
-namespace orm\domain\access\connections;
+namespace orm\domain\connections;
 
 use orm\domain\connections\ConnectionA;
+use orm\domain\connections\ConnectionFactory;
 use orm\domain\connections\ConnectionType;
 use vsc\infrastructure\String;
 use vsc\ExceptionUnimplemented;
 
-class nullSql extends ConnectionA {
+class NullSql extends ConnectionA {
 	public 		$conn,
 				$link;
 

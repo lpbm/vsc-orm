@@ -11,6 +11,7 @@ namespace orm\domain\access\connections;
 
 use orm\domain\connections\ConnectionA;
 use orm\domain\connections\ExceptionConnection;
+use orm\domain\connections\NullSql;
 
 class mdb2 extends ConnectionA {
 	public 		$conn,
@@ -30,7 +31,7 @@ class mdb2 extends ConnectionA {
 
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null ){
 		if ($this->isLoadable()) {
-			return new nullSql();
+			return new NullSql();
 		}
 
 		if (!empty ($dbHost))

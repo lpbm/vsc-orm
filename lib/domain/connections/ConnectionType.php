@@ -6,7 +6,7 @@
  */
 namespace orm\domain\connections;
 
-interface ConnectionType {
+class ConnectionType {
 	const nullsql		= -1;
 	const mysql			= 1;
 	const postgresql	= 2;

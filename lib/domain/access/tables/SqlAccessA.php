@@ -7,7 +7,7 @@
  * @version 0.0.1
  */
 namespace orm\domain\access\tables;
-use orm\domain\access\connections\ConnectionFactory;
+use orm\domain\connections\ConnectionFactory;
 use orm\domain\access\drivers\MySqlDriver;
 use orm\domain\access\drivers\PostgreSqlDriver;
 use orm\domain\access\drivers\sqlDriverA;

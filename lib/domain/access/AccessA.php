@@ -6,7 +6,7 @@
  */
 namespace orm\domain\access;
 
-use orm\domain\access\connections\ConnectionFactory;
+use orm\domain\connections\ConnectionFactory;
 use orm\domain\access\drivers\MySqlDriver;
 use orm\domain\access\drivers\sqlDriverA;
 use orm\domain\access\drivers\SqlGenericDriver;
@@ -41,9 +41,8 @@ abstract class AccessA extends Object {
 			switch ($this->getDatabaseType()) {
 				case ConnectionType::mysql :
 					return new MySqlDriver();
-
 			}
-			$this->setGrammarHelper($oGrammarHelper);
+//			$this->setGrammarHelper($oGrammarHelper);
 		}
 		return $this->oGrammarHelper;
 	}
