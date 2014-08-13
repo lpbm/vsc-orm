@@ -5,7 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 09.05.29
  */
-
+namespace orm\domain\access\fields;
 
 class FieldEnumAccess extends SqlFieldAccessA {
 	public function getType ( FieldA $oField) {

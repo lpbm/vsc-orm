@@ -6,7 +6,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @version 0.0.1
  */
-
+namespace orm\domain\access\tables;
 use vsc\infrastructure\Object;
 
 abstract class SqlAccessA extends Object implements SqlAccessI {

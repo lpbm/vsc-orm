@@ -5,8 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 09.05.01
  */
-
-
+namespace orm\domain\domain\fields;
 
 class FieldDateTime extends FieldA {
 	protected  $maxLength = null; // arbitrary chosen, > strlen(YYYY-MM-DD GG:II:SS)

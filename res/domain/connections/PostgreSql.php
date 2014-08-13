@@ -1,4 +1,6 @@
 <?php
+namespace orm\domain\access\connections;
+
 use vsc\ExceptionUnimplemented;
 
 abstract class postgreSql extends ConnectionA {

@@ -1,4 +1,18 @@
 <?php
+/**
+ * @pacakge \orm\domain\access
+ * @author marius orcsik <marius@habarnam.ro>
+ * @date 2010.06.02
+ */
+namespace orm\domain\access;
+use orm\domain\access\connections\ConnectionFactory;
+use orm\domain\access\drivers\mySQLDriver;
+use orm\domain\access\drivers\sqlDriverA;
+use orm\domain\access\drivers\SQLGenericDriver;
+use orm\domain\connections\ConnectionA;
+use orm\domain\connections\ConnectionType;
+use orm\domain\connections\ExceptionConnection;
+use orm\domain\domain\DomainObjectI;
 use vsc\infrastructure\Object;
 
 abstract class AccessA extends Object {
@@ -78,6 +92,7 @@ abstract class AccessA extends Object {
 //
 //		return $sRet;
 	}
+
 	public function getGroupByString () {
 //		$sGroupBy = '';
 //		if (count ($this->aGroupBys) > 0 ) {

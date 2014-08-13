@@ -3,6 +3,7 @@
  * Pseudo null to be implemented (ehm, inherited) by the rest
  * of the DB classes.
  */
+namespace orm\domain\access\connections;
 
 use vsc\infrastructure\String;
 

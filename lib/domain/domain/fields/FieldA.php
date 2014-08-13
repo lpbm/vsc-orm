@@ -5,7 +5,9 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 09.03.29
  */
+namespace orm\domain\domain\fields;
 
+use orm\domain\domain\DomainObjectA;
 use vsc\infrastructure\Object;
 
 abstract class FieldA extends Object implements FieldI {

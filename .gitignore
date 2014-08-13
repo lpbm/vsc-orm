@@ -3,3 +3,5 @@
 .settings
 .idea/vsc-orm.iml
 .idea/
+/vendor/
+composer.lock

@@ -1,10 +1,10 @@
 <?php
 /**
- * @pacakge domain
- * @subpackage access
+ * @pacakge \orm\domain\access\clauses
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.06.01
  */
+namespace orm\domain\access\clauses;
 
 use vsc\infrastructure\Object;
 

@@ -15,6 +15,7 @@
  * OBS: maybe the static methods (_AND, _OR, sa.) can be conained into
  *  an external object. (??!)
  */
+namespace orm\domain\access\connections;
 
 use vsc\ExceptionUnimplemented;
 

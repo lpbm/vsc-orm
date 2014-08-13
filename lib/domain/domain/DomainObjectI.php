@@ -5,6 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.01.28
  */
+namespace orm\domain\domain;
 
 interface DomainObjectI {
 	public function getFields();

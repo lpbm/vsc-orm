@@ -1,4 +1,6 @@
 <?php
+namespace orm\domain\domain\fields;
+
 class FieldDecimal extends FieldInteger {
 	private $iDecimals = 3;
 

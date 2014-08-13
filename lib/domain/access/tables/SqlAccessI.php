@@ -5,6 +5,8 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.01.28
  */
+namespace orm\domain\access\tables;
+
 interface SqlAccessI {
 
 	static public function isValidConnection ($oConnection);

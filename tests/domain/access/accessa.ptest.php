@@ -1,32 +1,27 @@
 <?php
 /* Db constants
  -----------------------*/
-define ('DB_TYPE', 				'mysql');
-define ('DB_HOST', 				'localhost');
-define ('DB_USER', 				'root');
-define ('DB_PASS', 				'ASD');
-define ('DB_NAME', 				'b');
+//define ('DB_TYPE', 				'mysql');
+//define ('DB_HOST', 				'localhost');
+//define ('DB_USER', 				'root');
+//define ('DB_PASS', 				'ASD');
+//define ('DB_NAME', 				'b');
+//
+use \_fixtures\access\testConnection;
 
-
-
-
-
-include_once ('fixtures/DummyTable.php'); // the definition of the entity
-include_once ('../domain/fixtures/DataObject.php'); // the definition of the data object
-
-class AccessTest extends Snap_UnitTestCase {
+class AccessTest extends \PHPUnit_Framework_TestCase {
 	private $connection;
 
 	public function setUp () {
-		$this->connection = new Tdo();
+		$this->connection = new testConnection();
 		$this->connection->getConnection()->selectDatabase('test');
 	}
 
 	public function tearDown() {}
 
 	public function test_Instantiation () {
-		$this->assertIsA($this->connection, 'Tdo');
-		$this->assertIsA($this->connection, 'TdoA');
+		$this->assertInstanceOf('\\orm\\domain\\domain\\DomainObjectA', $this->connection);
+		$this->assertInstanceOf('\\orm\\domain\\domain\\DomainObject', $this->connection);
 	}
 
 	public function testGetConnection () {

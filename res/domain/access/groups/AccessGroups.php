@@ -5,6 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.09.19
  */
+namespace orm\domain\access\groups;
 
 use vsc\infrastructure\Object;
 

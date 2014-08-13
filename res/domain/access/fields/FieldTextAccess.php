@@ -5,7 +5,7 @@
  * @author Marius Orcsik <marius@habarnam.ro>
  * @date 09.05.29
  */
-
+namespace orm\domain\access\fields;
 
 class FieldTextAccess extends SqlFieldAccessA {
 	public function getType ( FieldA $oField) {

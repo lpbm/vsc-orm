@@ -1,4 +1,11 @@
 <?php
+/**
+ * @pacakge \orm\domain\access
+ * @author marius orcsik <marius@habarnam.ro>
+ * @date 2010.06.02
+ */
+namespace orm\domain\access;
+
 use vsc\infrastructure\Object;
 
 abstract class AccessEntityA extends Object {

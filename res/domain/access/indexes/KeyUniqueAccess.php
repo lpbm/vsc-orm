@@ -5,8 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 09.05.30
  */
-
-
+namespace orm\domain\access\indexes;
 
 class KeyUniqueAccess extends SqlIndexAccessA {
 	public function getType( IndexA $oIndex) {}

@@ -5,7 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 09.04.27
  */
-
+namespace orm\domain\domain\indexes;
 
 class KeyPrimary extends IndexA  {
 	public function __construct ($mIncomingStuff) {

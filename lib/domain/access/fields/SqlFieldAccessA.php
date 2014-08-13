@@ -1,10 +1,11 @@
 <?php
 /**
- * @pacakge domain
- * @subpackage access
+ * @pacakge \orm\domain\access\fields
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.05.29
  */
+namespace orm\domain\access\fields;
+
 abstract class SqlFieldAccessA extends AccessEntityA {
 	public function escapeValue ( FieldA $oField) {
 		/* @var $o sqlDriverA */

@@ -5,10 +5,11 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.01.03
  */
+namespace orm\domain\models;
 
-use vsc\domain\models\ModelA;
-use vsc\infrastructure\Null;
-use vsc\ExceptionUnimplemented;
+use \vsc\domain\models\ModelA;
+use \vsc\infrastructure\Null;
+use \vsc\ExceptionUnimplemented;
 
 class SimpleSqlModelA extends ModelA implements DomainObjectI {
 	final public function __construct () {

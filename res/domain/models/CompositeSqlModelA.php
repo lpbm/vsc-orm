@@ -5,10 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.05.20
  */
-
-
-
-
+namespace orm\domain\models;
 
 abstract class CompositeSqlModelA extends SimpleSqlModelA implements CompositeDomainObjectI {
 	private $oConnection;

@@ -2,10 +2,10 @@
 /**
  *
  * The way I'm doing this is stupid
- * @pacakge domain
- * @subpackage access
+ * @pacakge  \orm\domain\access
  * @author marius orcsik <marius@habarnam.ro>
  */
+namespace orm\domain\access;
 
 use vsc\infrastructure\Object;
 

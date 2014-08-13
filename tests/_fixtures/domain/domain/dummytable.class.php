@@ -1,6 +1,7 @@
 <?php
+namespace \_fixtures\domain\domain;
 
-
+use \orm\domain\domain;
 
 class dummyTable extends DomainObjectA {
 	protected $name = 'dummy';

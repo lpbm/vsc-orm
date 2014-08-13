@@ -5,7 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 09.05.13
  */
-
+namespace orm\domain\domain\fields;
 
 class FieldEnum extends FieldA {
 	protected $values = array();

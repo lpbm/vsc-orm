@@ -5,7 +5,7 @@
  * @author Marius Orcsik <marius@habarnam.ro>
  * @date 09.05.01
  */
-
+namespace orm\domain\domain\fields;
 
 class FieldText extends FieldA {
 	protected  $maxLength = 255;

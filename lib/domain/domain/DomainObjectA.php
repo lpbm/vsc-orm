@@ -8,6 +8,7 @@
  * @author Marius Orcsik <marius@habarnam.ro>
  * @date 09.02.26
  */
+namespace orm\domain\domain;
 
 use vsc\domain\models\ModelA;;
 

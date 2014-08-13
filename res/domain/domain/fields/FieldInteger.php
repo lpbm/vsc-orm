@@ -5,7 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 09.03.29
  */
-
+namespace orm\domain\domain\fields;
 
 class FieldInteger extends FieldA {
 	protected  $maxLength = 11;

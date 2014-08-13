@@ -2,9 +2,15 @@
 	"name": "vsc/orm",
 	"type": "library",
 	"description": "A small collection of PHP classes for astracting database acceess",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/lpbm/vsc"
+        }
+    ],
 	"require": {
 		"php": ">=5.3.0",
-        "vsc/vsc": "*"
+        "vsc/vsc": "dev-composer_migration"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "*"
@@ -19,7 +25,7 @@
 		}
 	],
 	"autoload": {
-		"psr-4" : { "vsc\\" : ["lib/", "res/"]}
+		"psr-4" : { "orm\\" : ["lib/", "res/"]}
 	},
 	"autoload-dev": {
 		"psr-4" : { "_fixtures\\" : "tests/_fixtures"}

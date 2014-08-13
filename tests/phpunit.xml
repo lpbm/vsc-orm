@@ -2,11 +2,11 @@
     bootstrap="./orm_phpunittest_environment.php"
     colors="true"
     stopOnError="true"
-    stopOnFailure="false"
+    stopOnFailure="true"
     strict="true"
     processIsolation="true">
     <testsuites>
-        <testsuite name="my test suite">
+        <testsuite name="all">
             <directory suffix=".ptest.php">./</directory>
         </testsuite>
     </testsuites>

@@ -1,4 +1,11 @@
 <?php
+/**
+ * @pacakge \orm\domain\access\drivers
+ * @author marius orcsik <marius@habarnam.ro>
+ * @date 2010.06.01
+ */
+namespace orm\domain\access\drivers;
+
 use vsc\infrastructure\Object;
 
 abstract class sqlDriverA extends Object {

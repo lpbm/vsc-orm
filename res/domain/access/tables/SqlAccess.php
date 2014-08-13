@@ -5,11 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.04.01
  */
-
-
-
-
-
+namespace orm\domain\access\tables;
 
 class SqlAccess extends SqlAccessA {
 	private $aGroupBys	= array();

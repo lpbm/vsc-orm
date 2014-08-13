@@ -1,9 +1,10 @@
 <?php
 /**
- * @pacakge domain
- * @subpackage access
+ * @pacakge \orm\domain\connecions
  * @author Marius Orcsik <marius@habarnam.ro>
- * @date 09.04.29
+ * @date 2009.04.29
  */
+namespace orm\domain\connections;
+use orm\domain\domain\ExceptionDomain;
 
 class ExceptionConnection extends ExceptionDomain {}

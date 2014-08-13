@@ -5,6 +5,7 @@
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2011.04.25
  */
+namespace orm\domain\domain;
 
 use vsc\infrastructure\Object;
 
@@ -103,9 +104,9 @@ abstract class CompositeDomainObjectA extends Object implements CompositeDomainO
 
 	public function addDomainObject ( DomainObjectA $oIncDomainObject) {
 		$aDomainObjects = $this->getDomainObjects();
-		if (!key_exists($sName, $aDomainObjects)) {
+		if (!array_key_exists($sName, $aDomainObjects)) {
 			$oIncDomainObject->setParent($this);
-			$oRef = new ReflectionProperty($this, $oIncDomainObject->getTableName());
+			$oRef = new \ReflectionProperty($this, $oIncDomainObject->getTableName());
 			$oRef->setValue($object, $oIncDomainObject);
 
 			$oRef->setAccessible(false);
@@ -113,7 +114,7 @@ abstract class CompositeDomainObjectA extends Object implements CompositeDomainO
 	}
 
 	public function addForeignKey ($oRightField, $oLeftField) {
-		if (!FieldA::isValid($oRightField) || !FieldA::isValid($oLeftField))
+		if (!\FieldA::isValid($oRightField) || !FieldA::isValid($oLeftField))
 			throw new ExceptionInvalidType('Objects [' . get_class($oRightField) . '] and [' .get_class($oLeftField) .' ] do not have the proper types, expected [FieldA],[FieldA]' );
 		$iKey = count ($this->aForeignKeys);
 		if (!$oRightField->getParent()->hasTableAlias())

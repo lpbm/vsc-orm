@@ -7,6 +7,8 @@
  * @author Marius Orcsik <marius@habarnam.ro>
  * @date 09.04.27
  */
+namespace orm\domain\access\connections;
+
 class mdb2 extends ConnectionA {
 	public 		$conn,
 				$link;

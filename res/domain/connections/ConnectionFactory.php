@@ -2,6 +2,7 @@
 /**
  * Factory class for data objects
  */
+namespace orm\domain\access\connections;
 
 class ConnectionFactory {
 	static private	$instance	= null;

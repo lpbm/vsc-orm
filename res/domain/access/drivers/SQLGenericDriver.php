@@ -1,4 +1,6 @@
 <?php
+namespace orm\domain\access\drivers;
+
 class SQLGenericDriver extends sqlDriverA {
 	/**
 	 *

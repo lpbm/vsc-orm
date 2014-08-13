@@ -1,4 +1,6 @@
 <?php
+namespace orm\domain\access\drivers;
+
 class mySQLDriver extends SQLGenericDriver {
 	public $STRING_OPEN_QUOTE = '"',
 		$STRING_CLOSE_QUOTE = '"',

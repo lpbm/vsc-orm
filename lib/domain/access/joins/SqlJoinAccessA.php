@@ -1,10 +1,11 @@
 <?php
 /**
- * @pacakge domain
- * @subpackage access
+ * @pacakge \orm\domain\access\joins
  * @author marius orcsik <marius@habarnam.ro>
  * @date 2010.06.02
  */
+namespace orm\domain\access\joins;
+
 abstract class SqlJoinAccessA extends AccessEntityA {
 
 	public function getDefinition ( JoinA $oJoin) {
