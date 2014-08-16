@@ -23,13 +23,26 @@ class PostgreSql extends ConnectionA {
 		if (!extension_loaded('pgsql')) {
 			throw new ExceptionConnection ('PostgreSQL extension is not loaded.');
 		}
+		if (is_null($dbHost)) {
+			$dbHost = $this->getDatabaseHost();
+		}
+		if (is_null($dbUser)) {
+			$dbUser = $this->getDatabaseUser();
+		}
+		if (is_null($dbPass)) {
+			$dbPass = $this->getDatabasePassword();
+		}
+		if (is_null($dbName)) {
+			$dbName = $this->getDatabaseName();
+		}
+
 		parent::__construct ( $dbHost, $dbUser, $dbPass);
 		$this->selectDatabase($dbName);
 
 		try {
 			$this->connect ($dbHost, $dbUser, $dbPass, $dbName);
 		} catch (\Exception $e) {
-			vsc::d($e);
+
 		}
 	}
 
