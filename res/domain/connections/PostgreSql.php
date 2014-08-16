@@ -1,7 +1,7 @@
 <?php
 namespace orm\domain\connections;
 
-use orm\domain\domain\ExceptionDomain;
+use orm\domain\ExceptionDomain;
 use vsc\ExceptionUnimplemented;
 use vsc\infrastructure\vsc;
 
@@ -223,15 +223,15 @@ class PostgreSql extends ConnectionA {
 
 
 	public function startTransaction ($bAutoCommit = false) {
-		throw new ExceptionUnimplemented('Transaction support for postgres is not currenty implemented');
+		pg_query($this->link, 'BEGIN');
 	}
 
 	public function rollBackTransaction () {
-		throw new ExceptionUnimplemented('Transaction support for postgres is not currenty implemented');
+		pg_query($this->link, 'ROLLBACK');
 	}
 
 	public function commitTransaction () {
-		throw new ExceptionUnimplemented('Transaction support for postgres is not currenty implemented');
+		pg_query($this->link, 'COMMIT');
 	}
 
 	public function getFirst()
