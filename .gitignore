@@ -1,3 +1,8 @@
 .buildpath
 .project
 .settings
+.idea/vsc-orm.iml
+.idea/
+/vendor/
+composer.lock
+/.idea/
