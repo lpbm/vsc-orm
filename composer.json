@@ -5,15 +5,12 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/lpbm/vsc"
+            "url": "https://github.com/lpbm/vsc.git"
         }
     ],
 	"require": {
 		"php": ">=5.3.0",
         "vsc/vsc": "dev-master"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "*"
 	},
 	"minimum-stability": "stable",
 	"license": "MIT",
