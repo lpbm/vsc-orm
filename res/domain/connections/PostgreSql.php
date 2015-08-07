@@ -115,7 +115,7 @@ class PostgreSql extends ConnectionA {
 		} elseif (is_float($incData)) {
 			return floatval($incData);
 		} elseif (is_string($incData) && $this->isConnected()) {
-			return "'" . pg_escape_string ($this->getLink(), $incData) . "'";
+			return "'" . pg_escape_string ($this->link, $incData) . "'";
 		}
 		return false;
 	}
