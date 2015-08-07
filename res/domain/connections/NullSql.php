@@ -5,8 +5,8 @@
  */
 namespace orm\domain\connections;
 
-use vsc\infrastructure\String;
 use vsc\ExceptionUnimplemented;
+use vsc\infrastructure\StringUtils;
 
 class NullSql extends ConnectionA {
 	public 		$conn,
@@ -25,7 +25,7 @@ class NullSql extends ConnectionA {
 	 * @throws \vsc\ExceptionUnimplemented
 	 */
 	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null ) {
-		throw new ExceptionUnimplemented('This site has all database functionality disabled.'.String::nl().' Please check for configuration errors.');
+		throw new ExceptionUnimplemented('This site has all database functionality disabled.'.StringUtils::nl().' Please check for configuration errors.');
 	}
 
 	public function getType () {

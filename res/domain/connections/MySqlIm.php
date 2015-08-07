@@ -22,6 +22,7 @@ use orm\domain\connections\ConnectionType;
 use orm\domain\connections\ExceptionConnection;
 use vsc\ExceptionUnimplemented;
 use vsc\infrastructure\String;
+use vsc\infrastructure\StringUtils;
 
 class MySqlIm extends ConnectionA {
 	/**
@@ -154,7 +155,7 @@ class MySqlIm extends ConnectionA {
 			return false;
 
 		if ($this->link->errno)	{
-			throw new ExceptionConnection ($this->link->error. String::nl() . '<pre>' . $query . '</pre>' . String::nl ());
+			throw new ExceptionConnection ($this->link->error. StringUtils::nl() . '<pre>' . $query . '</pre>' . StringUtils::nl ());
 		}
 
 		$iReturn =  $this->link->affected_rows;
