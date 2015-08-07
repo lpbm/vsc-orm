@@ -82,10 +82,14 @@ class PostgreSql extends ConnectionA {
 	 *
 	 * @return bool
 	 */
-	public function close (){
-		pg_close($this->link);
-		$this->link = null;
-		return true;
+	public function close () {
+		if ($this->isConnected()) {
+			pg_close($this->link);
+			$this->link = null;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
