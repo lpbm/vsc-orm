@@ -8,11 +8,11 @@ use vsc\infrastructure\vsc;
 class PostgreSql extends ConnectionA {
 
 	static public function isValid ($oLink) {
-		return !is_null($oLink) && pg_connection_status($oLink) !== PGSQL_CONNECTION_OK;
+		return !is_null($oLink) && pg_connection_status($oLink) === PGSQL_CONNECTION_OK;
 	}
 
 	public function isConnected () {
-		return (pg_connection_status($this->link) !== PGSQL_CONNECTION_OK);
+		return (pg_connection_status($this->link) === PGSQL_CONNECTION_OK);
 	}
 
 	protected function getDatabaseType() {
