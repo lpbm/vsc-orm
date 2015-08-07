@@ -127,7 +127,7 @@ class PostgreSql extends ConnectionA {
 	 * @return mixed
 	 */
 	public function query ($query){
-		if ($this->isConnected()) {
+		if (!$this->isConnected()) {
 			return false;
 		}
 		if (!empty($query)) {
