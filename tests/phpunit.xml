@@ -4,15 +4,15 @@
 		convertNoticesToExceptions="true"
 		convertWarningsToExceptions="true"
 		colors="true"
-		stopOnIncomplete="true"
+		stopOnIncomplete="false"
 		stopOnError="false"
 		stopOnFailure="false"
 		stopOnRisky="true"
 		stopOnSkipped="false"
-		processIsolation="true">
+		processIsolation="false">
 	<testsuites>
-		<testsuite name="all">
-			<directory suffix="Test.php">./</directory>
+		<testsuite name="unittests">
+			<directory suffix="Test.php">./unit</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>

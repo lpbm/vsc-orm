@@ -25,9 +25,6 @@ class FieldIntegerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	public function testInstantiationName () {
-		return $this->assertEqual (
-			$this->state->getName(),
-			'integerField'
-		);
+		return $this->assertEquals ('integerField', $this->state->getName());
 	}
 }

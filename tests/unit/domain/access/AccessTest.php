@@ -16,6 +16,10 @@ use orm\domain\connections\ConnectionType;
 use orm\domain\connections\MySqlIm;
 use vsc\Exception;
 
+/**
+ * Class AccessTest
+ * @package domain\access
+ */
 class AccessTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @var DummyConnectionAccess
@@ -29,17 +33,19 @@ class AccessTest extends \PHPUnit_Framework_TestCase {
 
 	public function tearDown() {}
 
-	public function test_Instantiation () {
+	public function testInstantiation () {
 		$this->assertInstanceOf(AccessA::class, $this->connection);
 		$this->assertInstanceOf(DummyConnectionAccess::class, $this->connection);
 	}
 
 	public function testGetConnection () {
+		$this->markTestIncomplete('needs db connection');
 		$this->connection->setConnection ( ConnectionFactory::connect(ConnectionType::mysql));
 		$this->assertIsA($this->connection->getConnection(), MySqlIm::class);
 	}
 
 	public function testCreateSQL () {
+		$this->markTestIncomplete('needs db connection');
 		// we should have a separate test for each type of connection
 		// the test should be the actual creation
 		$o = new DummyTable();
