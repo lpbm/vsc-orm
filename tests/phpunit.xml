@@ -1,13 +1,18 @@
 <phpunit
-    bootstrap="./orm_phpunittest_environment.php"
-    colors="true"
-    stopOnError="true"
-    stopOnFailure="true"
-    strict="true"
-    processIsolation="true">
-    <testsuites>
-        <testsuite name="all">
-            <directory suffix=".ptest.php">./</directory>
-        </testsuite>
-    </testsuites>
+		bootstrap="./orm_phpunittest_environment.php"
+		convertErrorsToExceptions="true"
+		convertNoticesToExceptions="true"
+		convertWarningsToExceptions="true"
+		colors="true"
+		stopOnIncomplete="true"
+		stopOnError="false"
+		stopOnFailure="false"
+		stopOnRisky="true"
+		stopOnSkipped="false"
+		processIsolation="true">
+	<testsuites>
+		<testsuite name="all">
+			<directory suffix="Test.php">./</directory>
+		</testsuite>
+	</testsuites>
 </phpunit>
