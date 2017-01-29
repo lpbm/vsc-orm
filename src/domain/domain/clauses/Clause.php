@@ -17,12 +17,23 @@ class Clause extends Object {
 	private	$sPredicate;
 	private	$mPredicative;
 
+	/**
+	 * @return mixed
+	 */
 	public function getSubject() {
 		return $this->mSubject;
 	}
+
+	/**
+	 * @return string
+	 */
 	public function getPredicate() {
 		return $this->sPredicate;
 	}
+
+	/**
+	 * @return string
+	 */
 	public function getPredicative() {
 		return $this->mPredicative;
 	}
@@ -43,7 +54,7 @@ class Clause extends Object {
 			return;
 		}
 
-		if ( FieldA::isValid($mSubject) && is_null($mPredicative) && $sPredicate == '=') {
+		if ( FieldA::isValid($mSubject) && (is_null($mPredicative) && ($sPredicate == '=' || is_null($sPredicate)))) {
 			$sPredicate = 'IS';
 		}
 
@@ -64,7 +75,62 @@ class Clause extends Object {
 		}
 	}
 
+	/**
+	 * @param string $sPredicate
+	 * @return bool
+	 */
 	public function validPredicate ($sPredicate) {
-		return true;
+		return in_array(strtolower($sPredicate), self::getValidPredicate($this));
+	}
+
+	/**
+	 * @param Clause $oClause
+	 * @return array
+	 */
+	static public function getValidPredicate (Clause $oClause) {
+		// need to find a way to abstract these
+		$mPredicative	= $oClause->getPredicative();
+		if ($mPredicative instanceof Clause) {
+			// we'll have Subject AND|OR|XOR Predicative
+			$validPredicates = [
+				'and',
+				'&&',
+				'or',
+				'||',
+				'xor'
+			];
+		} elseif (($mPredicative instanceof FieldA) || is_numeric($mPredicative)) {
+			// we'll have Subject =|!= Predicative
+			$validPredicates = [
+				'=',
+				'!=',
+				'>',
+				'<',
+				'>=',
+				'<='
+			];
+		} elseif (is_array($mPredicative)) {
+			$validPredicates = [
+				'in',
+				'not in'
+			];
+		} elseif (is_string($mPredicative)) {
+			$validPredicates = [
+				'=',
+				'like',
+				// dates
+				'>',
+				'<',
+				'>=',
+				'<='
+			];
+		} elseif (is_null($mPredicative)) {
+			$validPredicates = [
+				'is',
+				'is not'
+			];
+		}
+
+		return $validPredicates;
 	}
 }

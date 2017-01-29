@@ -46,7 +46,10 @@ class SqlClauseAccess extends Object {
 		return $this->oGrammarHelper;
 	}
 
-
+	/**
+	 * @param Clause $oClause
+	 * @return string
+	 */
 	public function getDefinition ( Clause $oClause) {
 		$verb = null;
 		if (is_string($oClause->getSubject())) {
@@ -72,7 +75,7 @@ class SqlClauseAccess extends Object {
 		} elseif (is_string($oClause->getPredicative ())) {
 			$preStr = $this->getConnection()->escape($oClause->getPredicative ());
 
-			if ($oClause->getPredicate() == 'LIKE') {
+			if (strtolower($oClause->getPredicate()) == 'like') {
 				$preStr = '%'.$preStr.'%';
 			}
 
@@ -88,74 +91,10 @@ class SqlClauseAccess extends Object {
 			$preStr = $oClause->getPredicative ();
 		}
 
-		$retStr = $subStr.' ' . $oClause->getPredicate() . ' '.$preStr;
+		$retStr = $subStr.' ' . strtoupper($oClause->getPredicate()) . ' ' . $preStr;
 		if (Clause::isValid($oClause->getSubject ()) && (Clause::isValid($oClause->getPredicative ())))
 			return '('.$retStr.')';
 
 		return $retStr;
-	}
-
-	static public function getValidPredicate ( Clause $oClause) {
-		// need to find a way to abstract these
-		//		$validPredicates = array (
-		//			'AND',
-		//			'&&',
-		//			'OR',
-		//			'||',
-		//			'XOR',
-		//			'IS',
-		//			'IS NOT',
-		//			'!',
-		//			'IN',
-		//			'LIKE',
-		//			'=',
-		//			'!=',
-		//			'<>'
-		//		);
-
-		$mPredicative	= $oClause->getPredicative();
-		$sPredicate		= $oClause->getPredicate();
-		if ($mPredicative instanceof Clause) {
-			// we'll have Subject AND|OR|XOR Predicative
-			$validPredicates = array (
-				'and',
-				'&&',
-				'or',
-				'||',
-				'xor'
-				);
-		} elseif (($mPredicative instanceof FieldA) || is_numeric($mPredicative)) {
-			// we'll have Subject =|!= Predicative
-			$validPredicates = array (
-				'=',
-				'!=',
-				'>',
-				'<',
-				'>=',
-				'<='
-				);
-		} elseif (is_array($mPredicative)) {
-			$validPredicates = array (
-				'in',
-				'not in'
-				);
-		} elseif (is_string($mPredicative)) {
-			$validPredicates = array (
-				'=',
-				'like',
-			// dates
-				'>',
-				'<',
-				'>=',
-				'<='
-				);
-		} elseif (is_null($mPredicative)) {
-			$validPredicates = array (
-				'is',
-				'is not'
-				);
-		}
-
-		return $validPredicates;
 	}
 }
