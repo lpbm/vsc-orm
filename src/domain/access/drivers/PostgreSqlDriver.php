@@ -24,8 +24,8 @@ class PostgreSqlDriver extends SqlGenericDriver {
 		return $retStr.' '.$incObj.' ';
 	}
 
-	public function _DELETE($sIncName) {
-		return ' DELETE FROM ' . $sIncName . ' ';
+	public function _DELETE($sName) {
+		return ' DELETE FROM ' . $sName . ' ';
 	}
 
 	public function _CREATE ($sIncName){

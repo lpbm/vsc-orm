@@ -11,8 +11,8 @@ class MySqlDriver extends SqlGenericDriver {
 		$TRUE = '1',
 		$FALSE = '0';
 
-	public function _DELETE($sIncName) {
-		return ' DELETE FROM ' . $sIncName . ' ';
+	public function _DELETE($sName) {
+		return ' DELETE FROM ' . $sName . ' ';
 	}
 
 	public function _CREATE ($sName){

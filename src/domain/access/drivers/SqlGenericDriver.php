@@ -9,91 +9,147 @@ class SqlGenericDriver extends SqlDriverA {
 	 * @param array $incObj = array (array('field1','alias1),array('field2','alias2),...)
 	 * @return string
 	 */
-	public function _SELECT ($incObj){
+	public function _SELECT ($incObj = null){
 		if (empty ($incObj)) {
 			return '';
 		}
 
-		$retStr = 'SELECT ';
-		return $retStr . ' ' . $incObj . ' ';
-	}
-
-	public function _DELETE($sIncName) {
-		return ' DELETE FROM ' . $sIncName . ' ';
-	}
-
-	public function _CREATE ($sName){
-		return ' CREATE TABLE ' . $sName . ' ';
-	}
-
-	public function _SET(){
-		return ' SET ';
-	}
-
-	public function _INSERT ($incData){
-		if (empty ($incData)) {
-			return '';
+		if (is_array($incObj)) {
+			$selectables = implode(', ', $incObj);
 		}
-		return ' INSERT INTO '.$incData . ' ';
-	}
-
-	public function _VALUES ($incData) {
-		return ' VALUES ' . $incData;
-	}
-
-	public function _UPDATE ($sTable){
-		return ' UPDATE '. $sTable;
+		if (is_scalar($incObj)) {
+			$selectables = $incObj;
+		}
+		$retStr = 'SELECT';
+		return $retStr . ' ' . $selectables . ' ';
 	}
 
 	/**
-	 * returns the FROM tabl...es part of the query
+	 * @param $sName
+	 * @return string
+	 */
+	public function _DELETE($sName = null) {
+		if (empty ($sName)) {
+			return '';
+		}
+		return 'DELETE FROM ' . $sName . ' ';
+	}
+
+	/**
+	 * @param $sName
+	 * @return string
+	 */
+	public function _CREATE ($sName = null){
+		if (empty ($sName)) {
+			return '';
+		}
+		return 'CREATE TABLE ' . $sName . ' ';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function _SET() {
+		return ' SET ';
+	}
+
+	/**
+	 * @param $incData
+	 * @return string
+	 */
+	public function _INSERT ($incData = null) {
+		if (empty ($incData)) {
+			return '';
+		}
+		return 'INSERT INTO ' . $incData . ' ';
+	}
+
+	/**
+	 * @param $incData
+	 * @return string
+	 */
+	public function _VALUES ($incData = null) {
+		if (empty ($incData)) {
+			return '';
+		}
+		return ' VALUES ' . $incData;
+	}
+
+	/**
+	 * @param $sName
+	 * @return string
+	 */
+	public function _UPDATE ($sName = null){
+		if (empty ($sName)) {
+			return '';
+		}
+		return 'UPDATE '. $sName . ' ';
+	}
+
+	/**
+	 * returns the FROM tables part of the query
 	 *
 	 * @param string[] $incData - table names
 	 * @return string
 	 */
-	public function _FROM ($incData){
+	public function _FROM ($incData = null){
 		if (empty ($incData)) {
 			return '';
 		}
 		if (is_array($incData)) {
-			$incData = implode( "\n".', ',$incData);
+			$incData = implode( ",\n",$incData);
 		}
 
-		return ' FROM '.$incData.' ';
+		return ' FROM ' . $incData . ' ';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function _AND (){
+	public function _AND () {
 		return ' AND ';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function _OR (){
+	public function _OR () {
 		return ' OR ';
 	}
-	public function _JOIN ($type) {
+
+	/**
+	 * @param $type
+	 * @return string
+	 */
+	public function _JOIN ($type = null) {
+		if (empty($type)) {
+			return '';
+		}
 		return $type . ' JOIN ';
 	}
 
 	/**
 	 * @return string
 	 */
-	public function _AS ($str){
-		return ' AS '.$str;
+	public function _AS ($alias = null) {
+		if (empty($alias)) {
+			return '';
+		}
+		return ' AS ' . $alias;
 	}
 
-	public function _LIMIT ($start, $end = 0){
+	/**
+	 * @param int $start
+	 * @param int $end
+	 * @return string
+	 */
+	public function _LIMIT ($start = 0, $end = 0) {
 		if (!empty($end)) {
 			return ' LIMIT '.(int)$start . ', '.(int)$end;
 		} elseif (!empty ($start)) {
 			return ' LIMIT '.(int)$start;
-		} else {
-			return '';
 		}
+		return '';
 	}
 
 	/**
@@ -110,22 +166,37 @@ class SqlGenericDriver extends SqlDriverA {
 		}
 
 		$retStr = ' GROUP BY ';
-		return $retStr.' '.$incObj;
+		return $retStr . $incObj;
 	}
 
+	/**
+	 * @param string $orderBys
+	 * @return string
+	 */
 	public function _ORDER ($orderBys = null){
 		if (empty($orderBys)) {
 			return '';
 		}
 		$retStr = ' ORDER BY ';
 
-		return $retStr.$orderBys;
+		return $retStr . $orderBys;
 	}
 
-	public function _WHERE ($clause) {
-		return ' WHERE '.$clause;
+	/**
+	 * @param string $clause
+	 * @return string
+	 */
+	public function _WHERE ($clause = null) {
+		if (empty($clause)) {
+			return '';
+		}
+		return ' WHERE ' . $clause;
 	}
 
+	/**
+	 * @param bool $bIsNull
+	 * @return string
+	 */
 	public function _NULL ($bIsNull = true) {
 		// ?
 		return (!$bIsNull ? ' NOT ' : ' ') . 'NULL';
