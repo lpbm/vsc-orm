@@ -3,7 +3,7 @@
  * At the moment we only have the habsql class:D, but:
  * Here should be a _PACKAGE_ to include:
  * <type>Sql - class to encapsulate the <something>sql_* functionality
- * 			 - it will be derived from interfaceSql
+ * 			 - it will be derived from tdoHabstract
  * <type>SqlR - the sql resource of type <type> [might not be needed]
  * 			   - in case I need it, <type>Sql->conn will have this type
  * <type>SqlOrder - a struct(class, yeah, yeah) to contain the ORDER BY
@@ -17,53 +17,66 @@
  */
 namespace orm\domain\connections;
 
-use orm\domain\connections\ConnectionA;
-use orm\domain\connections\ConnectionType;
-use orm\domain\connections\ExceptionConnection;
 use vsc\ExceptionUnimplemented;
+use vsc\infrastructure\StringUtils;
 
 class MySql extends ConnectionA {
-	public 		$conn,
-				$link;
+	/**
+	 * @var \mysqli_result
+	 */
+	public 		$conn;
 
-	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null ){
-		if (!extension_loaded('mysql')) {
+	/**
+	 * @var \mysqli
+	 */
+	public		$link;
+	private 	$iLastInsertId;
+
+	private		$defaultSocketPath;
+
+	static public function isValidLink ($oLink) {
+		return ($oLink instanceof \mysqli);
+	}
+
+	public function isConnected () {
+		return (!is_null($this->link->connect_error));
+	}
+
+	public function __construct( $dbHost = null, $dbUser = null, $dbPass = null, $dbName = null ){
+		if (!extension_loaded('mysqli')) {
 			throw new ExceptionConnection ('MySQL extension is not loaded.');
 		}
-		if (empty ($dbHost)) {
-			trigger_error('Database connection data missing!', E_USER_ERROR);
-		}
+		parent::__construct ( $dbHost, $dbUser, $dbPass);
+		$this->connect ($dbHost, $dbUser, $dbPass, $dbName);
+	}
 
-		if (empty ($dbUser)) {
-			trigger_error('Database connection data missing!', E_USER_ERROR);
-		}
-
-		if (!empty($dbHost) && !empty( $dbUser) && !empty($dbPass)) {
-			$this->connect($dbHost, $dbUser, $dbPass);
-		}
+	public function getEngine () {
+		return 'InnoDB';
 	}
 
 	public function getType () {
 		return ConnectionType::mysql;
 	}
 
-	public function __destruct() {
-	}
-
-	static public function isValidLink ($oLink) {
-		return (is_resource($oLink) && get_resource_type($oLink) == 'mysql link');
+	public function validResult ($oResource) {
+		return ($oResource instanceof \mysqli_result);
 	}
 
 	/**
 	 * wrapper for mysql_connect
 	 *
+	 * @param string $dbHost
+	 * @param string $dbUser
+	 * @param string $dbPass
+	 * @param string $dbName
+	 * @throws \orm\domain\connections\ExceptionConnection
 	 * @return bool
 	 */
-	private function connect($dbHost = null, $dbUser = null, $dbPass = null){
-		$this->link	= mysql_connect($dbHost, $dbUser, $dbPass);
-		if(!self::isValidLink($this->link)) {
-			trigger_error(mysql_error(), E_USER_ERROR);
-			return false;
+	protected function connect ($dbHost = null, $dbUser = null, $dbPass = null, $dbName = null ) {
+		$this->link	= new \mysqli($dbHost, $dbUser, $dbPass, $dbName, null, $this->defaultSocketPath);
+		if (!empty($this->link->connect_errno)) {
+			$this->error = $this->link->connect_errno . ' ' . $this->link->connect_error;
+			throw new ExceptionConnection('mysqli : ' . $this->error);
 		}
 		return true;
 	}
@@ -73,27 +86,27 @@ class MySql extends ConnectionA {
 	 *
 	 * @return bool
 	 */
-	public function close(){
-		if(isDBLink($this->link)) {
-			mysql_close($this->link);
-			return true;
-		}
-		return false;
+	public function close (){
+		if (self::isValidLink($this->link))
+			$this->link->close ();
+		// dunno how smart it is to nullify an mysqli object
+		$this->link = null;
+		return true;
 	}
 
 	/**
 	 * wrapper for mysql_select_db
 	 *
 	 * @param string $incData
+	 * @throws \orm\domain\connections\ExceptionConnection
 	 * @return bool
 	 */
-	public function selectDatabase($incData){
-		if (isDBLink($this->link)) {
-			$this->name = $incData;
-			return mysql_select_db($incData);
+	public function selectDatabase ($incData){
+		if (self::isValidLink($this->link) && $this->link->select_db($incData)) {
+			return true;
 		} else {
-			trigger_error(mysql_error(), E_USER_ERROR);
-			return false;
+
+			throw new ExceptionConnection($this->error);
 		}
 	}
 
@@ -104,40 +117,61 @@ class MySql extends ConnectionA {
 	 * @return mixed
 	 */
 	public function escape ($incData){
-		if (is_string($incData))
-			return mysql_real_escape_string($incData);
-		else
-			return (int)$incData;
+		if (is_null ($incData)){
+			return 'NULL';
+		} elseif (is_int($incData)) {
+			return intval($incData);
+		} elseif (is_float($incData)) {
+			return floatval($incData);
+		} elseif (is_string($incData)) {
+			return "'" . $this->link->escape_string($incData) . "'";
+		}
+	}
+
+	public function getLastInsertId() {
+		return $this->iLastInsertId;
 	}
 
 	/**
 	 * wrapper for mysql_query
 	 *
 	 * @param string $query
+	 * @throws \orm\domain\connections\ExceptionConnection
 	 * @return mixed
 	 */
-	public function query($query){
-		//echo $query;
-		if (!isDBLink($this->link)) {
+	public function query ($query){
+		if (!($this->link instanceof \mysqli)) {
 			return false;
 		}
 		if (!empty($query)) {
-			if (!preg_match("/insert|update|delete/i", $query))
-				$this->conn = mysql_query ($query);
-			echo $query.'<br/>';
-		} else {
+			$qst = microtime(true);
+			$this->conn = $this->link->query($query);
+			$qend = microtime(true);
+		} else
 			return false;
-		}
-		$error = mysql_error();
 
-		if (!empty($error))	{
-			trigger_error($error.'<br/> '.$query);
-			return false;
+		if ($this->link->errno)	{
+			throw new ExceptionConnection ($this->link->error. StringUtils::nl() . '<pre>' . $query . '</pre>' . StringUtils::nl ());
 		}
-		if (preg_match("/insert|update|delete/i", $query))
-			return $this->conn;
-		else
-			return mysql_num_rows($this->conn);
+
+		$iReturn =  $this->link->affected_rows;
+
+		if (isset($GLOBALS['vsc::queries'])) {
+			$aQuery = array (
+				'query'		=> $query,
+				'duration'	=> $qend - $qst,  // seconds
+				'num_rows'	=> is_numeric($iReturn) ? $iReturn : 0
+			);
+
+			$GLOBALS['vsc::queries'][] = $aQuery;
+		}
+
+		if (stristr ($query, 'insert')) {
+			$this->conn = $this->link->query('select last_insert_id();');
+			$this->iLastInsertId = $this->getScalar();
+		}
+
+		return $iReturn;
 	}
 
 	/**
@@ -146,12 +180,35 @@ class MySql extends ConnectionA {
 	 * @return array
 	 */
 	public function getRow (){
-		return mysql_fetch_assoc($this->conn);
+		if ($this->conn instanceof \mysqli_result)
+			return $this->conn->fetch_row ();
 	}
 
-	public function getAssoc (){
-		//var_dump(mysql_fetch_assoc($this->conn));
-		return mysql_fetch_assoc($this->conn);
+	// FIXME: for some reason the getAssoc and getArray work differently
+	public function getAssoc () {
+		if (
+			$this->conn instanceof \mysqli_result
+		) {
+			return $this->conn->fetch_assoc();
+		}
+	}
+
+	/**
+	 * wrapper for mysql_fetch_row
+	 *
+	 * @return array
+	 */
+	public function getObjects () {
+		$retArr = array ();
+		$i = 0;
+		if ($this->conn instanceof \mysqli_result && $this->link instanceof \mysqli ) {
+			while ($i < mysqli_field_count ($this->link)) {
+				$t = $this->conn->fetch_field_direct ($i++);
+				$retArr[] = $t;
+			}
+		}
+
+		return $retArr;
 	}
 
 	/**
@@ -161,12 +218,16 @@ class MySql extends ConnectionA {
 	 */
 	public function getArray (){
 		$retArr = array();
-		while (($r = mysql_fetch_assoc($this->conn))){
-			$retArr[] = $r;
+// 		d ($this->conn->field_count);
+		if ($this->conn instanceof \mysqli_result) {
+			while (($r = $this->conn->fetch_assoc ())){
+				$retArr[] = $r;
+			}
+			$this->conn->free_result();
 		}
-
 		return $retArr;
 	}
+
 	/**
 	 * getting the first result in the resultset
 	 *
@@ -186,7 +247,7 @@ class MySql extends ConnectionA {
 		$sQuery = 'SET autocommit=' . ($bAutoCommit ? 1 : 0) . ';';
 		$this->query($sQuery);
 		$sQuery = 'START TRANSACTION;';
-		return $this->query($sQuery);
+				return $this->query($sQuery);
 	}
 
 	public function rollBackTransaction () {
@@ -202,7 +263,7 @@ class MySql extends ConnectionA {
 		throw new ExceptionUnimplemented ('Unable to use transactions for the current MySQL engine ['.$this->getEngine().'].');
 
 		$sQuery = 'COMMIT;';
-		return $this->query($sQuery);
+				return $this->query($sQuery);
 	}
 
 	public function getFirst()

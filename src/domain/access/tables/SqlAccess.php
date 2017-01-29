@@ -22,7 +22,7 @@ use orm\domain\domain\indexes\IndexA;
 use orm\domain\domain\indexes\KeyPrimary;
 use orm\domain\domain\fields\FieldInteger;
 use orm\domain\ExceptionConstraint;
-use orm\domain\domain\ExceptionDomain;
+use orm\domain\ExceptionDomain;
 use orm\domain\domain\fields\FieldI;
 
 use vsc\domain\access\ExceptionAccess;
@@ -137,7 +137,6 @@ class SqlAccess extends SqlAccessA {
 	/**
 	 *
 	 * @param DomainObjectI $oDomainObject
-	 * @param array $aValues array (0 => array (// usable with fromArray), ... )
 	 * @return string
 	 */
 	public function outputInsertSql ( DomainObjectI $oDomainObject, $aValuesGroup = array()) {
@@ -213,8 +212,6 @@ class SqlAccess extends SqlAccessA {
 
 	/**
 	 * @TODO - next item on the agenda
-	 * @param DomainObjectA $oDomainObject
-	 * @param DomainObjectA ...
 	 * @return string
 	 */
 	public function outputSelectSql () {
@@ -254,6 +251,12 @@ class SqlAccess extends SqlAccessA {
 		return $sRet . ';';
 	}
 
+	public function outputCreateSql ( DomainObjectI $oDomainObject) {
+		$o = $this->getDriver();
+		$sSql = $o->_CREATE($this->getTableName($oDomainObject));
+
+		return $sSql . ';';
+	}
 
 	public function outputDeleteSql ( DomainObjectI $oDomainObject) {
 		$sSql = '';

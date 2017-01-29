@@ -8,56 +8,36 @@ namespace domain\access;
 //define ('DB_PASS', 				'ASD');
 //define ('DB_NAME', 				'b');
 //
-use mocks\domain\access\DummyConnectionAccess;
-use mocks\domain\domain\DummyTable;
-use orm\domain\access\AccessA;
+use mocks\domain\access\table\DummyPostgresConnection;
+use orm\domain\access\tables\SqlAccessA;
 use orm\domain\connections\ConnectionFactory;
 use orm\domain\connections\ConnectionType;
-use orm\domain\connections\MySqlIm;
-use vsc\Exception;
+use orm\domain\connections\PostgreSql;
 
 /**
  * Class AccessTest
  * @package domain\access
  */
-class AccessTest extends \PHPUnit_Framework_TestCase {
+class AccessTest extends \BaseTestCase {
 	/**
-	 * @var DummyConnectionAccess
+	 * @var DummyPostgresConnectionAccess
 	 */
 	private $connection;
 
 	public function setUp () {
-		$this->connection = new DummyConnectionAccess();
-//		$this->connection->getConnection()->selectDatabase('test');
+		$this->connection = new DummyPostgresConnection();
+		$this->connection->getConnection()->selectDatabase('test');
 	}
 
 	public function tearDown() {}
 
 	public function testInstantiation () {
-		$this->assertInstanceOf(AccessA::class, $this->connection);
-		$this->assertInstanceOf(DummyConnectionAccess::class, $this->connection);
+		$this->assertInstanceOf(SqlAccessA::class, $this->connection);
+		$this->assertInstanceOf(DummyPostgresConnection::class, $this->connection);
 	}
 
 	public function testGetConnection () {
-		$this->markTestIncomplete('needs db connection');
-		$this->connection->setConnection ( ConnectionFactory::connect(ConnectionType::mysql));
-		$this->assertIsA($this->connection->getConnection(), MySqlIm::class);
-	}
-
-	public function testCreateSQL () {
-		$this->markTestIncomplete('needs db connection');
-		// we should have a separate test for each type of connection
-		// the test should be the actual creation
-		$o = new DummyTable();
-		$createSQL = $this->connection->outputCreateSQL($o);
-
-		$i = $this->connection->getConnection()->query($createSQL);
-		$this->assertTrue($i, 'Creation of table failed');
-		try {
-			$this->connection->getConnection()->query('DROP TABLE ' . $o->getName());
-		} catch (Exception $e) {
-			// the drop of the table might go wrong - why oh why ?
-			throw $e;
-		}
+		$this->connection->setConnection (ConnectionFactory::connect(ConnectionType::mysql));
+		$this->assertInstanceOf(PostgreSql::class, $this->connection->getConnection());
 	}
 }

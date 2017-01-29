@@ -57,6 +57,10 @@ class PostgreSql extends ConnectionA {
 	/**
 	 * wrapper for pg_connect
 	 *
+	 * @param string $dbHost
+	 * @param string $dbUser
+	 * @param string $dbPass
+	 * @param string $dbName
 	 * @return bool
 	 */
 	protected function connect ($dbHost = null, $dbUser = null, $dbPass = null , $dbName = null ) {

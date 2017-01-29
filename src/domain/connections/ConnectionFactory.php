@@ -28,7 +28,7 @@ class ConnectionFactory {
 	 * @param string $dbUser
 	 * @param string $dbPass
 	 * @param string $dbName
-	 * @return null|MySql|MySqlIm|PostgreSql|NullSql
+	 * @return null|MySql|MySql|PostgreSql|NullSql
 	 * @throws \vsc\ExceptionUnimplemented
 	 */
 	static public function getInstance ($iConnectionType, $dbHost = null, $dbUser = null, $dbPass = null, $dbName = null) {
@@ -41,7 +41,7 @@ class ConnectionFactory {
 			switch ($iConnectionType) {
 			case ConnectionType::mysql:
 				if (extension_loaded('mysqli')) {
-					self::$instance =  new MySqlIm($dbHost, $dbUser, $dbPass, $dbName);
+					self::$instance =  new MySql($dbHost, $dbUser, $dbPass, $dbName);
 				} elseif (extension_loaded('mysql')) {
 					self::$instance =  new MySql($dbHost, $dbUser, $dbPass, $dbName);
 				} else {

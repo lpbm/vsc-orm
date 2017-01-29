@@ -53,6 +53,7 @@ abstract class AccessA extends Object {
 
 	/**
 	 * @return ConnectionA
+	 * @throws ExceptionConnection
 	 */
 	public function getConnection () {
 		if (!ConnectionA::isValid($this->oConnection)) {

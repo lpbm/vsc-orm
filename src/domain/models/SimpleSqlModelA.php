@@ -13,7 +13,7 @@ use orm\domain\domain\DomainObjectI;
 use orm\domain\domain\fields\FieldA;
 use orm\domain\domain\indexes\IndexA;
 use \vsc\domain\models\ModelA;
-use \vsc\infrastructure\Null;
+use \vsc\infrastructure\Base;
 
 class SimpleSqlModelA extends ModelA implements DomainObjectI {
 	final public function __construct () {
@@ -76,7 +76,7 @@ class SimpleSqlModelA extends ModelA implements DomainObjectI {
 	 * @return DomainObjectA
 	 */
 	public function getDomainObject() {
-		return new Null();
+		return new Base();
 	}
 
 	public function getTableName() {}

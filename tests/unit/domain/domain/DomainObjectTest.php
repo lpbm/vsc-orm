@@ -11,7 +11,7 @@ use orm\domain\domain\DomainObjectA;
 use orm\domain\domain\fields\FieldA;
 use orm\domain\domain\indexes\KeyPrimary;
 
-class DomainObjectTest extends \PHPUnit_Framework_TestCase {
+class DomainObjectTest extends \BaseTestCase {
 	/**
 	 * @var DomainObjectA
 	 */

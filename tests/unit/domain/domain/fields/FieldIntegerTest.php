@@ -9,7 +9,7 @@ namespace domain\domain\fields;
 
 use orm\domain\domain\fields\FieldInteger;
 
-class FieldIntegerTest extends \PHPUnit_Framework_TestCase {
+class FieldIntegerTest extends \BaseTestCase {
 	private $state;
 
 	public function setUp () {
