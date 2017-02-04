@@ -20,9 +20,6 @@ class orderTest extends \BaseTestCase
 
 	public function test_ORDERBy() {
 		$by = uniqid('test:');
-		$this->assertEquals(
-			' ORDER BY ' . $this->driver->FIELD_OPEN_QUOTE . $by . $this->driver->FIELD_CLOSE_QUOTE .' ',
-			$this->driver->_ORDER($by)
-		);
+		$this->assertEquals(sprintf(' ORDER BY `%s` ', $by), $this->driver->_ORDER($by));
 	}
 }
