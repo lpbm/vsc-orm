@@ -3,7 +3,7 @@ namespace orm\domain\access\drivers;
 
 use orm\domain\domain\DomainObjectI;
 
-class SqlGenericDriver extends SqlDriverA {
+class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 	/**
 	 *
 	 * @param array $incObj = array (array('field1','alias1),array('field2','alias2),...)
@@ -129,6 +129,17 @@ class SqlGenericDriver extends SqlDriverA {
 	}
 
 	/**
+	 * @param string $subject
+	 * @param string $predicate
+	 * @param string $predicative
+	 * @return string
+	 */
+	public function _ON ($subject, $predicate, $predicative) {
+		return ' ON ' . $subject . ' '. $predicate . ' ' . $predicative;
+	}
+
+	/**
+	 * @param null $alias
 	 * @return string
 	 */
 	public function _AS ($alias = null) {
@@ -153,7 +164,7 @@ class SqlGenericDriver extends SqlDriverA {
 	}
 
 	/**
-	 * TODO make it receive an array of tdoHabstractFields
+	 * TODO make it receive an array of AbstractField
 	 * (see _SELECT)
 	 *
 	 * @param DomainObjectI $incObj
@@ -170,16 +181,27 @@ class SqlGenericDriver extends SqlDriverA {
 	}
 
 	/**
-	 * @param string $orderBys
+	 * @param mixed $orderBys
+	 * @param mixed $aDirections
 	 * @return string
 	 */
-	public function _ORDER ($orderBys = null){
+	public function _ORDER ($orderBys = null, $aDirections = null){
 		if (empty($orderBys)) {
 			return '';
 		}
-		$retStr = ' ORDER BY ';
+		$sOrderBys = '';
+		if (!is_array($orderBys)) {
+			$orderBys = array($orderBys);
+		}
 
-		return $retStr . $orderBys;
+		foreach ($orderBys as $key => $sField) {
+			$sOrderBys .= $this->getQuotedFieldName($sField) . ' ';
+			if (is_array ($aDirections)) {
+				$sOrderBys .= isset($aDirections[$key]) ? $aDirections[$key] : '';
+			}
+		}
+
+		return ' ORDER BY ' . $sOrderBys;
 	}
 
 	/**
@@ -200,5 +222,37 @@ class SqlGenericDriver extends SqlDriverA {
 	public function _NULL ($bIsNull = true) {
 		// ?
 		return (!$bIsNull ? ' NOT ' : ' ') . 'NULL';
+	}
+
+	/**
+	 * @param string $sFieldName
+	 * @return string
+	 * @throws ExceptionDriver
+	 */
+	protected function getQuotedFieldName ($sFieldName)
+	{
+		if (strpos($sFieldName, '.') !== false) {
+			$aElements = explode('.', $sFieldName);
+		} else {
+			$aElements = [$sFieldName];
+		}
+		if (count($aElements) > 3) {
+			// this shouldn't really happen
+			throw new ExceptionDriver('Too many dots in column identifier ' . $sFieldName);
+		}
+		foreach ($aElements as $sElement) {
+			$aQuotedElements[] = static::FIELD_OPEN_QUOTE . $sElement . static::FIELD_CLOSE_QUOTE;
+		}
+
+		return implode('.', $aQuotedElements);
+	}
+
+	/**
+	 * @param string $sValue
+	 * @return mixed
+	 */
+	protected function getQuotedValue ($sValue)
+	{
+		return static::STRING_OPEN_QUOTE . $sValue . static::STRING_CLOSE_QUOTE;
 	}
 }

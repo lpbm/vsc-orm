@@ -8,6 +8,13 @@ namespace orm\domain\access\drivers;
 
 interface SqlDriverI
 {
+	const STRING_OPEN_QUOTE = '';
+	const STRING_CLOSE_QUOTE = '';
+	const FIELD_OPEN_QUOTE = '';
+	const FIELD_CLOSE_QUOTE = '';
+	const TRUE = '';
+	const FALSE = '';
+
 	public function _SELECT($incObj);
 	
 	public function _DELETE($sName);

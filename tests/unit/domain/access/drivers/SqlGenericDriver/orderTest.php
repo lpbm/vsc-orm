@@ -20,6 +20,6 @@ class orderTest extends \BaseTestCase
 
 	public function test_ORDERBy() {
 		$by = uniqid('test:');
-		$this->assertEquals(' ORDER BY ' . $by, $this->driver->_ORDER($by));
+		$this->assertEquals(sprintf(' ORDER BY %s ', $by), $this->driver->_ORDER($by));
 	}
 }

@@ -9,10 +9,15 @@ namespace orm\domain\access\drivers;
 use vsc\infrastructure\Base;
 
 abstract class SqlDriverA extends Base implements SqlDriverI {
-	public 	$STRING_OPEN_QUOTE,
-			$STRING_CLOSE_QUOTE,
-			$FIELD_OPEN_QUOTE,
-			$FIELD_CLOSE_QUOTE,
-			$TRUE,
-			$FALSE;
+	/**
+	 * @param string $sFieldName
+	 * @return string
+	 */
+	abstract protected function getQuotedFieldName($sFieldName);
+
+	/**
+	 * @param string $sValue
+	 * @return mixed
+	 */
+	abstract protected function getQuotedValue($sValue);
 }
