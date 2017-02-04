@@ -14,14 +14,18 @@ class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 			return '';
 		}
 
+		$aSelectables = [];
 		if (is_array($incObj)) {
-			$selectables = implode(', ', $incObj);
+			foreach ($incObj as $key => $field) {
+				$incObj[$key] = $this->getQuotedFieldName($field);
+			}
+			$aSelectables = implode(', ', $incObj);
 		}
 		if (is_scalar($incObj)) {
-			$selectables = $incObj;
+			$aSelectables = $this->getQuotedFieldName($incObj);
 		}
 		$retStr = 'SELECT';
-		return $retStr . ' ' . $selectables . ' ';
+		return $retStr . ' ' . $aSelectables . ' ';
 	}
 
 	/**
@@ -253,6 +257,9 @@ class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 	 */
 	protected function getQuotedValue ($sValue)
 	{
-		return static::STRING_OPEN_QUOTE . $sValue . static::STRING_CLOSE_QUOTE;
+		if (is_string($sValue)) {
+			return static::STRING_OPEN_QUOTE . $sValue . static::STRING_CLOSE_QUOTE;
+		}
+		return $sValue;
 	}
 }

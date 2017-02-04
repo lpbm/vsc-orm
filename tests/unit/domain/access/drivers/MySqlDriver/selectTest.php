@@ -20,7 +20,7 @@ class selectTest extends \BaseTestCase
 
 	public function test_SELECTSingleField() {
 		$field = uniqid('test:');
-		$this->assertEquals('SELECT ' . $field .' ', $this->driver->_SELECT($field));
+		$this->assertEquals(sprintf('SELECT `%s` ',$field), $this->driver->_SELECT($field));
 	}
 
 	public function test_SELECTMultipleFields() {
@@ -28,6 +28,6 @@ class selectTest extends \BaseTestCase
 		$field2 = uniqid('test2:');
 		$field3 = uniqid('test4:');
 		$multi = [$field1, $field2, $field3];
-		$this->assertEquals('SELECT ' . implode(', ', $multi) . ' ', $this->driver->_SELECT($multi));
+		$this->assertEquals('SELECT `' . implode('`, `', $multi) . '` ', $this->driver->_SELECT($multi));
 	}
 }
