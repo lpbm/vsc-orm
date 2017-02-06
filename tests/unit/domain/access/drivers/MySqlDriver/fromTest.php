@@ -28,6 +28,6 @@ class fromTest extends \BaseTestCase
 		$field2 = uniqid('test2:');
 		$field3 = uniqid('test4:');
 		$multi = [$field1, $field2, $field3];
-		$this->assertEquals(' FROM ' . implode(",\n", $multi) . ' ', $this->driver->_FROM($multi));
+		$this->assertEquals(' FROM `' . implode("`,\n`", $multi) . '` ', $this->driver->_FROM($multi));
 	}
 }

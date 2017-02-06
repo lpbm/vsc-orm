@@ -20,6 +20,6 @@ class createTest extends \BaseTestCase
 
 	public function test_CREATETable() {
 		$table = uniqid('test:');
-		$this->assertEquals('CREATE TABLE ' . $table .' ', $this->driver->_CREATE($table));
+		$this->assertEquals('CREATE TABLE `' . $table .'` ', $this->driver->_CREATE($table));
 	}
 }

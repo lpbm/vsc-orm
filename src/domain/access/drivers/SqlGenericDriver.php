@@ -6,7 +6,7 @@ use orm\domain\domain\DomainObjectI;
 class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 	/**
 	 *
-	 * @param array $incObj = array (array('field1','alias1),array('field2','alias2),...)
+	 * @param array $incObj
 	 * @return string
 	 */
 	public function _SELECT ($incObj = null){
@@ -36,7 +36,7 @@ class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 		if (empty ($sName)) {
 			return '';
 		}
-		return 'DELETE FROM ' . $sName . ' ';
+		return 'DELETE FROM ' . $this->getQuotedFieldName($sName) . ' ';
 	}
 
 	/**
@@ -47,7 +47,7 @@ class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 		if (empty ($sName)) {
 			return '';
 		}
-		return 'CREATE TABLE ' . $sName . ' ';
+		return 'CREATE TABLE ' . $this->getQuotedFieldName($sName) . ' ';
 	}
 
 	/**
@@ -65,10 +65,11 @@ class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 		if (empty ($incData)) {
 			return '';
 		}
-		return 'INSERT INTO ' . $incData . ' ';
+		return 'INSERT INTO ' . $this->getQuotedFieldName($incData) . ' ';
 	}
 
 	/**
+	 * @todo fix this with some logic
 	 * @param $incData
 	 * @return string
 	 */
@@ -87,7 +88,7 @@ class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 		if (empty ($sName)) {
 			return '';
 		}
-		return 'UPDATE '. $sName . ' ';
+		return 'UPDATE '. $this->getQuotedFieldName($sName) . ' ';
 	}
 
 	/**
@@ -101,7 +102,10 @@ class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 			return '';
 		}
 		if (is_array($incData)) {
-			$incData = implode( ",\n",$incData);
+			foreach ($incData as $key => $table) {
+				$incData[$key] = $this->getQuotedFieldName($table);
+			}
+			$incData = implode( ",\n", $incData);
 		}
 
 		return ' FROM ' . $incData . ' ';
@@ -150,7 +154,7 @@ class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 		if (empty($alias)) {
 			return '';
 		}
-		return ' AS ' . $alias;
+		return ' AS ' . $this->getQuotedFieldName($alias) . ' ';
 	}
 
 	/**
@@ -181,7 +185,7 @@ class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 		}
 
 		$retStr = ' GROUP BY ';
-		return $retStr . $incObj;
+		return $retStr . $this->getQuotedFieldName($incObj) . ' ';
 	}
 
 	/**

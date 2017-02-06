@@ -20,6 +20,6 @@ class deleteTest extends \BaseTestCase
 
 	public function test_DELETETable() {
 		$table = uniqid('test:');
-		$this->assertEquals('DELETE FROM ' . $table .' ', $this->driver->_DELETE($table));
+		$this->assertEquals('DELETE FROM `' . $table .'` ', $this->driver->_DELETE($table));
 	}
 }

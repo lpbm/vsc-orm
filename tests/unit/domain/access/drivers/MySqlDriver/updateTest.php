@@ -20,6 +20,6 @@ class updateTest extends \BaseTestCase
 
 	public function test_UPDATETable() {
 		$table = uniqid('test:');
-		$this->assertEquals('UPDATE ' . $table .' ', $this->driver->_UPDATE($table));
+		$this->assertEquals('UPDATE `' . $table .'` ', $this->driver->_UPDATE($table));
 	}
 }

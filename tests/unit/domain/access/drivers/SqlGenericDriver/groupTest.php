@@ -20,6 +20,6 @@ class groupTest extends \BaseTestCase
 
 	public function test_GROUPBy() {
 		$by = uniqid('test:');
-		$this->assertEquals(' GROUP BY ' . $by, $this->driver->_GROUP($by));
+		$this->assertEquals(' GROUP BY ' . $by . ' ', $this->driver->_GROUP($by));
 	}
 }

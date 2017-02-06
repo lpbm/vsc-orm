@@ -20,6 +20,6 @@ class insertTest extends \BaseTestCase
 
 	public function test_INSERTTable() {
 		$table = uniqid('test:');
-		$this->assertEquals('INSERT INTO ' . $table .' ', $this->driver->_INSERT($table));
+		$this->assertEquals('INSERT INTO `' . $table .'` ', $this->driver->_INSERT($table));
 	}
 }

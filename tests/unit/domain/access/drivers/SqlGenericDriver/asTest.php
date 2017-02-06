@@ -20,6 +20,6 @@ class asTest extends \BaseTestCase
 
 	public function test_ASTable() {
 		$alias = uniqid('test:');
-		$this->assertEquals(' AS ' . $alias, $this->driver->_AS($alias));
+		$this->assertEquals(' AS ' . $alias . ' ', $this->driver->_AS($alias));
 	}
 }
