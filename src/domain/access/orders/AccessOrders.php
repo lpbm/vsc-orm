@@ -8,9 +8,9 @@
 namespace orm\domain\access\orders;
 
 use orm\domain\connections\ConnectionA;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-class AccessOrders extends Object {
+class AccessOrders extends Base{
 	private $oConnection;
 	/**
 	 * @param ConnectionA $oConnection

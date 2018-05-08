@@ -10,10 +10,10 @@ namespace orm\domain\domain\indexes;
 use orm\domain\domain\fields\FieldI;
 use orm\domain\domain\fields\FieldA;
 use orm\domain\ExceptionIndex;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
 
-abstract class IndexA extends Object implements FieldI  {
+abstract class IndexA extends Base implements FieldI  {
 	protected $name;
 	protected $fields = array();
 

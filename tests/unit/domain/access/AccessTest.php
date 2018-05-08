@@ -9,6 +9,7 @@ namespace domain\access;
 //define ('DB_NAME', 				'b');
 //
 use mocks\domain\access\table\DummyPostgresConnection;
+use mocks\domain\connections\DummyConnection;
 use orm\domain\access\tables\SqlAccessA;
 use orm\domain\connections\ConnectionFactory;
 use orm\domain\connections\ConnectionType;
@@ -20,11 +21,14 @@ use orm\domain\connections\PostgreSql;
  */
 class AccessTest extends \BaseTestCase {
 	/**
-	 * @var DummyPostgresConnectionAccess
+	 * @var DummyPostgresConnection
 	 */
 	private $connection;
 
 	public function setUp () {
+		if (!extension_loaded('pgsql')) {
+			$this->markTestSkipped('Postgres extension not-loaded');
+		}
 		$this->connection = new DummyPostgresConnection();
 		$this->connection->getConnection()->selectDatabase('test');
 	}
@@ -32,12 +36,19 @@ class AccessTest extends \BaseTestCase {
 	public function tearDown() {}
 
 	public function testInstantiation () {
+		if (!extension_loaded('pgsql')) {
+			$this->markTestSkipped('Postgres extension not-loaded');
+		}
 		$this->assertInstanceOf(SqlAccessA::class, $this->connection);
 		$this->assertInstanceOf(DummyPostgresConnection::class, $this->connection);
 	}
 
 	public function testGetConnection () {
-		$this->connection->setConnection (ConnectionFactory::connect(ConnectionType::mysql));
-		$this->assertInstanceOf(PostgreSql::class, $this->connection->getConnection());
+		if (!extension_loaded('pgsql')) {
+			$this->markTestSkipped('Postgres extension not-loaded');
+		}
+		$o = new DummyConnection();
+		$this->connection->setConnection ($o);
+		$this->assertSame($o, $this->connection->getConnection());
 	}
 }

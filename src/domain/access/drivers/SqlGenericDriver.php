@@ -8,6 +8,7 @@ class SqlGenericDriver extends SqlDriverA implements SqlDriverI  {
 	 *
 	 * @param array $incObj
 	 * @return string
+	 * @throws ExceptionDriver
 	 */
 	public function _SELECT ($incObj = null){
 		if (empty ($incObj)) {

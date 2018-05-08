@@ -9,9 +9,9 @@ namespace orm\domain\domain;
 
 use orm\domain\domain\fields\FieldA;
 use orm\domain\ExceptionInvalidType;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-abstract class CompositeDomainObjectA extends Object implements CompositeDomainObjectI {
+abstract class CompositeDomainObjectA extends Baseimplements CompositeDomainObjectI {
 	private $aForeignKeys = array();
 
 	abstract public function buildObject();

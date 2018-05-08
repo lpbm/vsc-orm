@@ -8,9 +8,9 @@
 namespace orm\domain\access\groups;
 
 use orm\domain\connections\ConnectionA;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-class AccessGroups extends Object {
+class AccessGroups extends Base{
 	private $oConnection;
 	/**
 	 * @param ConnectionA $oConnection

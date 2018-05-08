@@ -8,12 +8,12 @@
  */
 namespace orm\domain\connections;
 
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-abstract class ConnectionA extends Object {
-	public $conn;
-	public $error;
-	public $link;
+abstract class ConnectionA extends Base implements SqlConnectionI {
+	protected $conn;
+	protected $error;
+	protected $link;
 
 	private $sDatabaseName;
 	private $sDatabasePassword;
@@ -55,10 +55,6 @@ abstract class ConnectionA extends Object {
 	public function selectDatabase($dbName) {
 		$this->sDatabaseName = $dbName;
 	}
-
-//	static public function isValid ($oIncomingConnection) {
-//		return ($oIncomingConnection instanceof static);
-//	}
 
 	public function __destruct() {}
 

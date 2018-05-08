@@ -75,6 +75,7 @@ class ConnectionFactory {
 	 * @param string $dbPass
 	 * @param string $dbName
 	 * @return SqlGenericDriver
+	 * @throws ExceptionUnimplemented
 	 */
 
 	static public function connect($iConnectionType, $dbHost = null, $dbUser = null, $dbPass = null, $dbName = null) {

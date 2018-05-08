@@ -17,9 +17,9 @@ use orm\domain\domain\CompositeDomainObjectA;
 use orm\domain\domain\DomainObjectA;
 use orm\domain\domain\DomainObjectI;
 use orm\domain\models\SimpleSqlModelA;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-abstract class AccessA extends Object {
+abstract class AccessA extends Base {
 	/**
 	 * @var ConnectionA
 	 */

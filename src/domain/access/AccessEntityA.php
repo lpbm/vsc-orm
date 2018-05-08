@@ -7,9 +7,9 @@
 namespace orm\domain\access;
 
 use orm\domain\connections\ConnectionA;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-abstract class AccessEntityA extends Object {
+abstract class AccessEntityA extends Base {
 	private $oConnection;
 	private $oGrammarHelper;
 

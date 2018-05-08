@@ -8,7 +8,7 @@ namespace orm\domain\connections;
 use vsc\ExceptionUnimplemented;
 use vsc\infrastructure\StringUtils;
 
-class NullSql extends ConnectionA {
+class NullSql extends ConnectionA implements SqlConnectionI {
 	public 		$conn,
 				$link;
 

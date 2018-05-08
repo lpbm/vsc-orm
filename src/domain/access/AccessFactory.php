@@ -29,9 +29,9 @@ use orm\domain\connections\ConnectionType;
 use orm\domain\domain\fields\FieldA;
 use orm\domain\domain\fields\FieldType;
 use orm\domain\domain\indexes\IndexA;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-class AccessFactory extends Object {
+class AccessFactory extends Base {
 	 private $oConnection;
 
 	 public function setConnection ( ConnectionA $oConnection) {

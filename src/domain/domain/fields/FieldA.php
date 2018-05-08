@@ -8,9 +8,9 @@
 namespace orm\domain\domain\fields;
 
 use orm\domain\domain\DomainObjectA;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-abstract class FieldA extends Object implements FieldI {
+abstract class FieldA extends Base implements FieldI {
 	protected  $name;
 	protected  $value;
 	protected  $default = null;

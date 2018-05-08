@@ -16,9 +16,9 @@ use orm\domain\connections\ConnectionA;
 use orm\domain\connections\ConnectionType;
 use orm\domain\domain\DomainObjectA;
 use orm\domain\ExceptionInvalidType;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-abstract class SqlAccessA extends Object implements SqlAccessI {
+abstract class SqlAccessA extends Base implements SqlAccessI {
 	/**
 	 * @var ConnectionA
 	 */

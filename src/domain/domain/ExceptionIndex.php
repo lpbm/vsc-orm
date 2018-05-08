@@ -7,6 +7,4 @@
  */
 namespace orm\domain;
 
-use orm\domain\domain\ExceptionDomain;
-
 class ExceptionIndex extends ExceptionDomain {}

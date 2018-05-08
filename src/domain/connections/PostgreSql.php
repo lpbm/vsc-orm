@@ -5,7 +5,7 @@ use orm\domain\ExceptionDomain;
 use vsc\ExceptionUnimplemented;
 use vsc\infrastructure\vsc;
 
-class PostgreSql extends ConnectionA {
+class PostgreSql extends ConnectionA implements SqlConnectionI {
 
 	static public function isValid ($oLink) {
 		return !is_null($oLink) && pg_connection_status($oLink) === PGSQL_CONNECTION_OK;

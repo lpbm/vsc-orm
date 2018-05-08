@@ -10,9 +10,9 @@ use orm\domain\access\drivers\SqlGenericDriver;
 use orm\domain\connections\ConnectionA;
 use orm\domain\domain\clauses\Clause;
 use orm\domain\domain\fields\FieldA;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-class SqlClauseAccess extends Object {
+class SqlClauseAccess extends Base {
 	private $oConnection;
 	private $oGrammarHelper;
 

@@ -20,7 +20,7 @@ namespace orm\domain\connections;
 use vsc\ExceptionUnimplemented;
 use vsc\infrastructure\StringUtils;
 
-class MySql extends ConnectionA {
+class MySql extends ConnectionA implements SqlConnectionI {
 	/**
 	 * @var \mysqli_result
 	 */

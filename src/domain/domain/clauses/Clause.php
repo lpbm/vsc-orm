@@ -10,9 +10,9 @@
 namespace orm\domain\domain\clauses;
 
 use orm\domain\domain\fields\FieldA;
-use vsc\infrastructure\Object;
+use vsc\infrastructure\Base;
 
-class Clause extends Object {
+class Clause extends Base {
 	private	$mSubject;
 	private	$sPredicate;
 	private	$mPredicative;
