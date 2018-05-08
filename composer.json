@@ -13,7 +13,8 @@
 		"vsc/vsc": "dev-master"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "~5.7"
+		"phpunit/phpunit": "~5.7",
+		"doctrine/instantiator": "<1.1.0"
 	},
 	"minimum-stability": "stable",
 	"license": "MIT",
