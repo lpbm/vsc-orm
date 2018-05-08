@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: habarnam
- * Date: 1/29/17
- * Time: 12:46 PM
- */
-
 namespace unit\domain\access\tables\SqlAccess;
 
 use mocks\domain\access\table\DummyGenericConnection;
